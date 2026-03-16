@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>XYZ | Đăng nhập hệ thống</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <style>
+        /* ================= BỘ BIẾN CSS MẶC ĐỊNH ================= */
+        :root {
+            --surface-ground: #0f172a;
+            --surface-card: #1e293b;
+            --surface-border: #334155;
+            --text-color: #f8fafc;
+            --text-color-secondary: #94a3b8;
+            --primary-color: #ec4899;
+            --primary-hover: #db2777;
+        }
+
+        :root.light-mode {
+            --surface-ground: #f8fafc;
+            --surface-card: #ffffff;
+            --surface-border: #e2e8f0;
+            --text-color: #0f172a;
+            --text-color-secondary: #64748b;
+        }
+
+        :root.surface-gray { --surface-ground: #111827; --surface-card: #1f2937; --surface-border: #374151; }
+        :root.light-mode.surface-gray { --surface-ground: #f3f4f6; --surface-card: #ffffff; --surface-border: #e5e7eb; }
+
+        :root.surface-zinc { --surface-ground: #18181b; --surface-card: #27272a; --surface-border: #3f3f46; }
+        :root.light-mode.surface-zinc { --surface-ground: #f4f4f5; --surface-card: #ffffff; --surface-border: #e4e4e7; }
+
+        :root.surface-neutral { --surface-ground: #171717; --surface-card: #262626; --surface-border: #404040; }
+        :root.light-mode.surface-neutral { --surface-ground: #f5f5f5; --surface-card: #ffffff; --surface-border: #e5e5e5; }
+
+        :root.surface-stone { --surface-ground: #1c1917; --surface-card: #292524; --surface-border: #44403c; }
+        :root.light-mode.surface-stone { --surface-ground: #f5f5f4; --surface-card: #ffffff; --surface-border: #e7e5e4; }
+
+
+        body {
+            background-color: var(--surface-ground);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .login-wrapper {
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--surface-ground) 100%);
+            padding: 2px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 450px;
+            transition: background 0.3s;
+        }
+
+        .login-card {
+            background-color: var(--surface-card);
+            border-radius: 18px;
+            padding: 40px;
+            transition: background-color 0.3s;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .form-control {
+            background-color: var(--surface-ground);
+            border: 1px solid var(--surface-border);
+            color: var(--text-color);
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            background-color: var(--surface-ground);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .form-control::placeholder { color: var(--text-color-secondary); }
+
+        /* ================= BẮT BỆNH AUTOFILL TRÌNH DUYỆT ================= */
+        /* Trị dứt điểm việc Chrome tự bôi nền xanh/vàng khi lưu mật khẩu */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px var(--surface-ground) inset !important;
+            -webkit-text-fill-color: var(--text-color) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        /* Class Link mới linh hoạt hơn */
+        .theme-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .theme-link:hover {
+            color: var(--primary-hover);
+        }
+
+        .layout-config-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .config-btn {
+            background-color: var(--surface-card);
+            color: var(--text-color);
+            border: 1px solid var(--surface-border);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .config-btn:hover { background-color: var(--surface-ground); }
+
+        .layout-config-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: var(--surface-card);
+            border-left: 1px solid var(--surface-border);
+            box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .layout-config-sidebar.active { right: 0; }
+
+        .sidebar-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-color-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .config-section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .color-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            transition: transform 0.2s;
+        }
+
+        .color-dot:hover { transform: scale(1.2); }
+        .color-dot.active { outline-color: var(--text-color); }
+
+        .surface-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid var(--surface-border);
+        }
+    </style>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        const savedSurface = localStorage.getItem('surface');
+        const savedPrimary = localStorage.getItem('primaryColor');
+        const savedHover = localStorage.getItem('primaryHover');
+
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light-mode');
+        }
+        if (savedSurface && savedSurface !== 'slate') {
+            document.documentElement.classList.add('surface-' + savedSurface);
+        }
+        if (savedPrimary && savedHover) {
+            document.documentElement.style.setProperty('--primary-color', savedPrimary);
+            document.documentElement.style.setProperty('--primary-hover', savedHover);
+        }
+    </script>
+</head>
+<body>
+
+<div class="layout-config-btn">
+    <button class="config-btn" id="themeToggle" onclick="toggleTheme()" title="Đổi giao diện">
+        <i class='bx bx-moon' id="themeIcon"></i>
+    </button>
+    <button class="config-btn" id="settingsToggle" onclick="toggleSidebar()" title="Đổi màu sắc">
+        <i class='bx bx-palette'></i>
+    </button>
+</div>
+
+<div class="layout-config-sidebar" id="configSidebar">
+    <button class="sidebar-close" onclick="toggleSidebar()"><i class='bx bx-x'></i></button>
+    <h5 class="mb-4">Tùy chỉnh Giao diện</h5>
+
+    <div class="config-section-title">Màu chủ đạo (Primary)</div>
+    <div class="color-grid" id="primaryColorGrid">
+    </div>
+
+    <div class="config-section-title">Màu nền (Surface)</div>
+    <div class="d-flex gap-2">
+        <button class="surface-dot" style="background-color: #0f172a;" onclick="setSurface('slate')" title="Slate"></button>
+        <button class="surface-dot" style="background-color: #111827;" onclick="setSurface('gray')" title="Gray"></button>
+        <button class="surface-dot" style="background-color: #18181b;" onclick="setSurface('zinc')" title="Zinc"></button>
+        <button class="surface-dot" style="background-color: #171717;" onclick="setSurface('neutral')" title="Neutral"></button>
+        <button class="surface-dot" style="background-color: #1c1917;" onclick="setSurface('stone')" title="Stone"></button>
+    </div>
+</div>
+
+<div class="login-wrapper">
+    <div class="login-card text-center">
+        <i class='bx bx-coffee-togo logo-icon'></i>
+        <h3 class="fw-bold mb-1">ĐĂNG NHẬP TÀI KHOẢN</h3>
+
+        <p class="text-secondary mb-4" style="font-size: 0.95rem;">Bạn chưa có tài khoản? <a href="#" class="theme-link fw-bold">Đăng ký tại đây</a></p>
+
+        <div th:if="${error}" class="alert alert-danger py-2 text-start" role="alert" style="font-size: 0.9rem;">
+            <i class='bx bx-error-circle me-1'></i> <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/login}" method="POST" class="text-start">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" placeholder="Nhập tài khoản" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" placeholder="Nhập mật khẩu" required>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                    <label class="form-check-label text-secondary" for="rememberMe" style="font-size: 0.85rem;">
+                        Remember me
+                    </label>
+                </div>
+                <a href="#" class="theme-link" style="font-size: 0.85rem;">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('configSidebar').classList.toggle('active');
+    }
+
+    function toggleTheme() {
+        const root = document.documentElement;
+        const icon = document.getElementById('themeIcon');
+        root.classList.toggle('light-mode');
+
+        if(root.classList.contains('light-mode')) {
+            icon.classList.replace('bx-moon', 'bx-sun');
+            localStorage.setItem('theme', 'light');
+        } else {
+            icon.classList.replace('bx-sun', 'bx-moon');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    function setSurface(type) {
+        const root = document.documentElement;
+        root.classList.remove('surface-slate', 'surface-gray', 'surface-zinc', 'surface-neutral', 'surface-stone');
+        if (type !== 'slate') {
+            root.classList.add('surface-' + type);
+        }
+        localStorage.setItem('surface', type);
+    }
+
+    function setPrimaryColor(hex, hoverHex) {
+        document.documentElement.style.setProperty('--primary-color', hex);
+        document.documentElement.style.setProperty('--primary-hover', hoverHex);
+        localStorage.setItem('primaryColor', hex);
+        localStorage.setItem('primaryHover', hoverHex);
+    }
+
+    const primaryColors = [
+        { hex: '#f8fafc', hover: '#e2e8f0' },
+        { hex: '#10b981', hover: '#059669' },
+        { hex: '#22c55e', hover: '#16a34a' },
+        { hex: '#84cc16', hover: '#65a30d' },
+        { hex: '#f97316', hover: '#ea580c' },
+        { hex: '#f59e0b', hover: '#d97706' },
+        { hex: '#eab308', hover: '#ca8a04' },
+        { hex: '#14b8a6', hover: '#0d9488' },
+        { hex: '#06b6d4', hover: '#0891b2' },
+        { hex: '#0ea5e9', hover: '#0284c7' },
+        { hex: '#3b82f6', hover: '#2563eb' },
+        { hex: '#6366f1', hover: '#4f46e5' },
+        { hex: '#8b5cf6', hover: '#7c3aed' },
+        { hex: '#a855f7', hover: '#9333ea' },
+        { hex: '#d946ef', hover: '#c026d6' },
+        { hex: '#ec4899', hover: '#db2777' },
+        { hex: '#ef4444', hover: '#dc2626' }
+    ];
+
+    const grid = document.getElementById('primaryColorGrid');
+    primaryColors.forEach(color => {
+        const btn = document.createElement('button');
+        btn.className = 'color-dot';
+        btn.style.backgroundColor = color.hex;
+        btn.onclick = () => setPrimaryColor(color.hex, color.hover);
+        grid.appendChild(btn);
+    });
+
+    window.onload = () => {
+        if(localStorage.getItem('theme') === 'light') {
+            const icon = document.getElementById('themeIcon');
+            if(icon) icon.classList.replace('bx-moon', 'bx-sun');
+        }
+    };
+</script>
+</body>
+</html>

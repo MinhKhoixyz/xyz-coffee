@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="offcanvasNavbar" class="sidebar-container bg-white border-end shadow-sm sticky-top vh-100">
+    <div class="header flex-column d-flex p-0 py-3 h-100">
+
+        <div class="banner mb-4 text-center d-none d-lg-block">
+            <a th:href="@{/admin/ban-hang}">
+                <img th:src="@{/assets/img/logo.png}" alt="Logo" class="img-fluid" style="max-width: 110px" />
+            </a>
+        </div>
+
+        <ul class="nav flex-column nav-pills px-2 gap-1">
+            <li class="nav-item">
+                <a th:href="@{/admin/ban-hang}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
+                    <i class="bx fs-4 bx-cart me-lg-3"></i>
+                    <span class="d-none d-lg-inline">Bán hàng</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a th:href="@{/admin/quan-ly-san-pham}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
+                    <i class="bx fs-4 bx-package me-lg-3"></i>
+                    <span class="d-none d-lg-inline">Quản lý sản phẩm</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a th:href="@{/admin/quan-ly-hoa-don}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
+                    <i class="bx fs-4 bx-receipt me-lg-3"></i>
+                    <span class="d-none d-lg-inline">Quản lý hóa đơn</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a th:href="@{/admin/quan-ly-nhan-vien}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
+                    <i class="bx fs-4 bx-user-voice me-lg-3"></i>
+                    <span class="d-none d-lg-inline">Quản lý nhân viên</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a th:href="@{/admin/quan-ly-khach-hang}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
+                    <i class="bx fs-4 bx-group me-lg-3"></i>
+                    <span class="d-none d-lg-inline">Quản lý khách hàng</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="px-2 mt-auto pb-3">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal" class="nav-link nav-logout d-flex align-items-center justify-content-center justify-content-lg-start text-danger">
+                <i class="bx bx-log-out fs-4 me-lg-3"></i>
+                <span class="d-none d-lg-inline fw-bold">Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true" style="z-index: 2000">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px">
+
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" id="logoutModalLabel">Xác nhận đăng xuất</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body py-4 text-center">
+                <i class="bx bx-log-out display-4 text-danger mb-3"></i>
+                <p class="mb-0">Bạn chắc chắn muốn đăng xuất khỏi hệ thống chứ?</p>
+            </div>
+
+            <div class="modal-footer border-top-0 pt-0 justify-content-center gap-2">
+                <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal">Hủy</button>
+
+                <form th:action="@{/logout}" method="POST" class="m-0">
+                    <button type="submit" class="btn btn-danger px-4 fw-bold">Đăng xuất</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
