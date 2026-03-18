@@ -1,0 +1,62 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark m-0">Quản lý loại sản phẩm</h4>
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-muted">Xin chào, <strong>admin</strong></span>
+            <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Avatar" class="rounded-circle" width="40" height="40">
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+            <div class="row gx-2">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class='bx bx-search text-muted'></i></span>
+                        <input type="text" class="form-control bg-light border-start-0" placeholder="Tìm tên loại sản phẩm...">
+                    </div>
+                </div>
+                <div class="col-md-7 text-end">
+                    <button class="btn btn-primary px-4 fw-medium">
+                        <i class='bx bx-plus me-1'></i> Thêm mới
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted" style="font-size: 0.85rem;">
+                    <tr>
+                        <th class="fw-semibold pb-3">#</th>
+                        <th class="fw-semibold pb-3">TÊN LOẠI</th>
+                        <th class="fw-semibold pb-3 text-center">TRẠNG THÁI</th>
+                        <th class="fw-semibold pb-3 text-end">HÀNH ĐỘNG</th>
+                    </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                    <tr th:each="lsp, iterStat : ${listLoaiSanPham}">
+                        <td><span class="text-muted" th:text="'#' + ${iterStat.count}"></span></td>
+
+                        <td><span class="fw-bold text-dark" th:text="${lsp.name}"></span></td>
+
+                        <td class="text-center">
+                            <div class="form-check form-switch d-inline-block m-0">
+                                <input class="form-check-input fs-5" type="checkbox" role="switch" th:checked="${lsp.isActive}">
+                            </div>
+                        </td>
+
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-link text-info text-decoration-none p-1 me-1"><i class='bx bx-pencil fs-5'></i></button>
+                            <button class="btn btn-sm btn-link text-danger text-decoration-none p-1"><i class='bx bx-trash fs-5'></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+</html>
