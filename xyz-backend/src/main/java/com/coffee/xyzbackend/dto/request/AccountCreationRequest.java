@@ -1,32 +1,30 @@
 package com.coffee.xyzbackend.dto.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccountCreationRequest {
-    @Size(min = 8, max = 20, message = "Username must be at least 8 charracters")
-    @Column(name = "username")
-    private String username;
-    @Size(min = 8, max = 20, message = "Password must be at least 8 charracters")
-    @Column(name = "password")
-    private String password;
 
-    @Email
-    @Column(name = "email")
-    private String email;
+    @NotBlank(message = "Username không được để trống")
+    @Size(min = 8, max = 20, message = "Username phải từ 8-20 ký tự")
+    String username;
 
-    @Column(name = "role")
-    private String role;
+    @NotBlank(message = "Password không được để trống")
+    @Size(min = 8, max = 20, message = "Password phải từ 8-20 ký tự")
+    String password;
 
-    @Column(name = "is_active")
-    private Boolean isActive;
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không đúng định dạng")
+    String email;
 
-    @Column(name = "created_at")
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    private Date updatedAt;
+    @NotBlank(message = "Lỗi không nhận được role")
+    String role;
 }

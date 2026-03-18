@@ -16,13 +16,6 @@ Dự án tập trung vào kiến trúc Monolithic (SSR), tối ưu hiệu năng,
 - **Database:** Microsoft SQL Server.
 - **Bảo mật:** JSON Web Token (JWT), HttpOnly Cookie, Spring Interceptor.
 
-## 🔥 Tính năng kỹ thuật cốt lõi
-- **Bảo mật Đa tầng:** JWT cấp phát qua HttpOnly Cookie chống tấn công XSS. Sử dụng `AuthInterceptor` làm trạm kiểm soát chặn đứng các truy cập trái phép vào route Admin.
-- **Giao diện Động (Dynamic Theme Engine):** Tự xây dựng cơ chế chuyển đổi Dark/Light mode và bộ màu Surface bằng Vanilla JS. Can thiệp sâu vào vòng đời load trang để triệt tiêu lỗi chớp nháy giao diện (FOUC).
-- **Kiến trúc Chuẩn mực:** Áp dụng MVC Pattern phân tách tầng rõ ràng. Dùng DTO Pattern (`LoginRequest`, `CreationRequest`) che giấu Entity và chống Over-posting.
-- **Kiểm soát Ngoại lệ (Global Exception):** Tích hợp `@ControllerAdvice` và Bean Validation chặn dữ liệu rác, xử lý lỗi tập trung, đảm bảo hệ thống không bao giờ crash trắng trang.
-- **Khóa chính An toàn:** Chuẩn hóa UUID cho toàn bộ primary key trong Database.
-
 ## 📂 Cấu trúc thư mục (Backend)
 ```text
 src/main/java/com/coffee/xyzbackend/

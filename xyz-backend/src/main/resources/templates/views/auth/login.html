@@ -8,7 +8,6 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <style>
-        /* ================= BỘ BIẾN CSS MẶC ĐỊNH ================= */
         :root {
             --surface-ground: #0f172a;
             --surface-card: #1e293b;
@@ -94,8 +93,6 @@
 
         .form-control::placeholder { color: var(--text-color-secondary); }
 
-        /* ================= BẮT BỆNH AUTOFILL TRÌNH DUYỆT ================= */
-        /* Trị dứt điểm việc Chrome tự bôi nền xanh/vàng khi lưu mật khẩu */
         input:-webkit-autofill,
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
@@ -117,7 +114,6 @@
 
         .btn-primary:hover { background-color: var(--primary-hover); }
 
-        /* Class Link mới linh hoạt hơn */
         .theme-link {
             color: var(--primary-color);
             text-decoration: none;
@@ -268,7 +264,7 @@
 
 <div class="login-wrapper">
     <div class="login-card text-center">
-        <i class='bx bx-coffee-togo logo-icon'></i>
+        <img th:src="@{/assets/img/system/xyz-logo.jpg}" alt="Logo XYZ Coffee" class="mb-3 shadow-sm" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
         <h3 class="fw-bold mb-1">ĐĂNG NHẬP TÀI KHOẢN</h3>
 
         <p class="text-secondary mb-4" style="font-size: 0.95rem;">Bạn chưa có tài khoản? <a href="#" class="theme-link fw-bold">Đăng ký tại đây</a></p>

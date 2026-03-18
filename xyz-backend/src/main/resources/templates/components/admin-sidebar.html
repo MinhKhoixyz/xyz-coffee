@@ -1,89 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Sidebar</title>
 </head>
 <body>
-<div id="offcanvasNavbar" class="sidebar-container bg-white border-end shadow-sm sticky-top vh-100">
-    <div class="header flex-column d-flex p-0 py-3 h-100">
 
-        <div class="banner mb-4 text-center d-none d-lg-block">
-            <a th:href="@{/admin/ban-hang}">
-                <img th:src="@{/assets/img/logo.png}" alt="Logo" class="img-fluid" style="max-width: 110px" />
+<div th:fragment="sidebar" class="app-sidebar d-flex flex-column bg-white shadow-sm" id="mainSidebar">
+
+    <style>
+        .sidebar-item {
+            color: #475569;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+            margin-bottom: 6px;
+            padding: 10px 16px;
+            text-decoration: none;
+        }
+        .sidebar-item:hover {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .sidebar-item.active {
+            background-color: #f1f5f9;
+            color: #0284c7;
+        }
+        .sidebar-icon {
+            font-size: 1.35rem;
+            margin-right: 14px;
+        }
+        .sidebar-sub-item {
+            color: #64748b;
+            font-size: 0.9rem;
+            padding: 8px 16px 8px 46px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .sidebar-sub-item:hover {
+            color: #0f172a;
+            background-color: #f8fafc;
+        }
+        .sidebar-sub-item.active {
+            color: #0284c7;
+            background-color: transparent;
+        }
+        .sidebar-sub-icon {
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        /* --- CSS MỚI: HIỆU ỨNG XOAY MŨI TÊN --- */
+        .menu-arrow {
+            transition: transform 0.3s ease;
+        }
+        .sidebar-item[aria-expanded="true"] .menu-arrow {
+            transform: rotate(-180deg);
+        }
+    </style>
+
+    <div class="p-4 text-center mb-1 d-none d-lg-block">
+        <a th:href="@{/admin/ban-hang}">
+            <img th:src="@{/assets/img/system/xyz-logo.jpg}" alt="XYZ Coffee"
+                 class="img-fluid protect-img" style="max-width: 90px; opacity: 0.95;"
+                 draggable="false" oncontextmenu="return false;" />
+        </a>
+    </div>
+
+    <ul class="nav flex-column px-3 mb-auto list-unstyled">
+
+        <li>
+            <a th:href="@{/admin/ban-hang}" class="sidebar-item d-flex align-items-center">
+                <i class="bx bx-store-alt sidebar-icon"></i>
+                <span>Bán hàng (POS)</span>
             </a>
-        </div>
+        </li>
 
-        <ul class="nav flex-column nav-pills px-2 gap-1">
-            <li class="nav-item">
-                <a th:href="@{/admin/ban-hang}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
-                    <i class="bx fs-4 bx-cart me-lg-3"></i>
-                    <span class="d-none d-lg-inline">Bán hàng</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a th:href="@{/admin/quan-ly-san-pham}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
-                    <i class="bx fs-4 bx-package me-lg-3"></i>
-                    <span class="d-none d-lg-inline">Quản lý sản phẩm</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a th:href="@{/admin/quan-ly-hoa-don}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
-                    <i class="bx fs-4 bx-receipt me-lg-3"></i>
-                    <span class="d-none d-lg-inline">Quản lý hóa đơn</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a th:href="@{/admin/quan-ly-nhan-vien}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
-                    <i class="bx fs-4 bx-user-voice me-lg-3"></i>
-                    <span class="d-none d-lg-inline">Quản lý nhân viên</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a th:href="@{/admin/quan-ly-khach-hang}" class="nav-link d-flex align-items-center justify-content-center justify-content-lg-start">
-                    <i class="bx fs-4 bx-group me-lg-3"></i>
-                    <span class="d-none d-lg-inline">Quản lý khách hàng</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="px-2 mt-auto pb-3">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal" class="nav-link nav-logout d-flex align-items-center justify-content-center justify-content-lg-start text-danger">
-                <i class="bx bx-log-out fs-4 me-lg-3"></i>
-                <span class="d-none d-lg-inline fw-bold">Đăng xuất</span>
+        <li>
+            <a class="sidebar-item d-flex align-items-center justify-content-between"
+               data-bs-toggle="collapse" href="#menuSanPham" role="button" aria-expanded="false" aria-controls="menuSanPham">
+                <div class="d-flex align-items-center">
+                    <i class="bx bx-coffee-togo sidebar-icon"></i>
+                    <span>Sản phẩm</span>
+                </div>
+                <i class="bx bx-chevron-down menu-arrow text-muted"></i>
             </a>
-        </div>
+
+            <div class="collapse" id="menuSanPham" data-bs-parent="#mainSidebar">
+                <ul class="list-unstyled mt-1 mb-2">
+                    <li>
+                        <a th:href="@{/loai-san-pham/hien-thi}" class="sidebar-sub-item">
+                            <i class="bx bx-category-alt sidebar-sub-icon"></i> Phân loại
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/san-pham/hien-thi}" class="sidebar-sub-item">
+                            <i class="bx bx-list-ul sidebar-sub-icon"></i> Danh sách
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li>
+            <a th:href="@{/quan-ly-hoa-don}" class="sidebar-item d-flex align-items-center">
+                <i class="bx bx-receipt sidebar-icon"></i>
+                <span>Hóa đơn</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/quan-ly-nhan-vien}" class="sidebar-item d-flex align-items-center">
+                <i class="bx bx-group sidebar-icon"></i>
+                <span>Nhân viên</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="p-3 mt-4 mb-2">
+        <a th:href="@{/logout}" data-bs-toggle="modal" data-bs-target="#logoutModal"
+           class="sidebar-item d-flex align-items-center" style="color: #ef4444;">
+            <i class="bx bx-log-out-circle sidebar-icon"></i>
+            <span>Đăng xuất</span>
+        </a>
     </div>
 </div>
 
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true" style="z-index: 2000">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px">
-
-            <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold" id="logoutModalLabel">Xác nhận đăng xuất</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body py-4 text-center">
-                <i class="bx bx-log-out display-4 text-danger mb-3"></i>
-                <p class="mb-0">Bạn chắc chắn muốn đăng xuất khỏi hệ thống chứ?</p>
-            </div>
-
-            <div class="modal-footer border-top-0 pt-0 justify-content-center gap-2">
-                <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal">Hủy</button>
-
-                <form th:action="@{/logout}" method="POST" class="m-0">
-                    <button type="submit" class="btn btn-danger px-4 fw-bold">Đăng xuất</button>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
 </body>
 </html>

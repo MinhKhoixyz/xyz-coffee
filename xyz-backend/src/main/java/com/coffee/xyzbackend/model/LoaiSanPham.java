@@ -1,44 +1,41 @@
 package com.coffee.xyzbackend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "loai_san_pham")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoaiSanPham {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "VARCHAR(36)")
     String id;
 
-    @Column(name = "name", nullable = false, unique = true)
-    @Size(min = 1, max = 100, message = "Tên loại sản phẩm phải trong khoảng 1-100 ký tự")
-    String ten;
+    @Column(name = "name", length = 100, nullable = false, unique = true)
+    String name;
 
-    @Column(name = "description")
-    @Size(min = 1, max = 255, message = "Miêu loại sản phẩm phải trong khoảng 1-255 ký tự")
+    @Column(name = "description", length = 255)
     String description;
 
     @Column(name = "is_active")
     Boolean isActive;
 
-    // Đóng băng field này, không cho update lần thứ 2 (updatable)
-    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
-    @CreationTimestamp
     LocalDateTime updatedAt;
 }

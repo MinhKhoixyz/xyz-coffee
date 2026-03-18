@@ -4,33 +4,28 @@ import com.coffee.xyzbackend.service.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.WebUtils;
 
 @Component
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthInterceptor implements HandlerInterceptor {
-    @Autowired
-    private JwtService jwtService;
+
+    JwtService jwtService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Cookie[] cookies = request.getCookies();
-        String token = null;
+        Cookie jwtCookie = WebUtils.getCookie(request, "accessToken");
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
-        // Nếu token ok thì có quyền truy cập - true
-        if (token != null && jwtService.validateToken(token)) {
+        if (jwtCookie != null && jwtService.validateToken(jwtCookie.getValue())) {
             return true;
         }
-        // Nếu token không ok thì không có quyền truy cập - false
+
         response.sendRedirect("/login");
         return false;
     }
