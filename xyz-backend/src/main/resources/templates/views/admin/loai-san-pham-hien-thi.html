@@ -67,7 +67,11 @@
 
                         <td class="text-end pe-4">
                             <button class="btn btn-sm btn-light text-primary border-0 p-2 me-1"
-                                    th:onclick="openEditModal([[${lsp.id}]], [[${lsp.name}]], [[${lsp.description}]], [[${lsp.isActive}]])"
+                                    th:data-id="${lsp.id}"
+                                    th:data-name="${lsp.name}"
+                                    th:data-desc="${lsp.description}"
+                                    th:data-active="${lsp.isActive}"
+                                    onclick="openEditModal(this.dataset.id, this.dataset.name, this.dataset.desc, this.dataset.active)"
                                     data-bs-toggle="tooltip" title="Sửa">
                                 <i class='bx bx-edit-alt fs-5'></i>
                             </button>
