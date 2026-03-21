@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class SanPhamService {
 
     SanPhamRepository sanPhamRepository;
     LoaiSanPhamRepository loaiSanPhamRepository;
+    CloudinaryService cloudinaryService;
 
-    // Lấy dữ liệu phân trang + Tìm kiếm
     public Page<SanPhamResponse> getAllSanPham(String keyword, Pageable pageable) {
         Page<SanPham> pageEntities;
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -35,13 +36,12 @@ public class SanPhamService {
         return pageEntities.map(this::mapToSanPhamResponse);
     }
 
-    // Phục vụ Dropdown Loại Sản Phẩm trên giao diện
     public List<LoaiSanPham> getDanhSachLoaiSanPham() {
         return loaiSanPhamRepository.findAll();
     }
 
     @Transactional
-    public void saveOrUpdate(SanPhamRequest request) {
+    public void saveOrUpdate(SanPhamRequest request, MultipartFile imageFile) {
         LoaiSanPham loaiSanPham = loaiSanPhamRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy danh mục!"));
 
@@ -49,20 +49,26 @@ public class SanPhamService {
         if (request.getId() != null && !request.getId().trim().isEmpty()) {
             entity = sanPhamRepository.findById(request.getId())
                     .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm!"));
-            entity.setName(request.getName());
-            entity.setImageUrl(request.getImageUrl());
-            entity.setDescription(request.getDescription());
-            entity.setIsActive(request.getIsActive() != null ? request.getIsActive() : false);
-            entity.setLoaiSanPham(loaiSanPham);
         } else {
-            entity = SanPham.builder()
-                    .name(request.getName())
-                    .imageUrl(request.getImageUrl())
-                    .description(request.getDescription())
-                    .isActive(request.getIsActive() != null ? request.getIsActive() : false)
-                    .loaiSanPham(loaiSanPham)
-                    .build();
+            entity = new SanPham();
         }
+
+        entity.setName(request.getName());
+        entity.setDescription(request.getDescription());
+        entity.setIsActive(request.getIsActive() != null ? request.getIsActive() : false);
+        entity.setLoaiSanPham(loaiSanPham);
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(imageFile);
+                entity.setImageUrl(imageUrl);
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi khi upload ảnh lên Cloudinary: " + e.getMessage());
+            }
+        } else if (request.getImageUrl() != null && !request.getImageUrl().isEmpty()) {
+            entity.setImageUrl(request.getImageUrl());
+        }
+
         sanPhamRepository.save(entity);
     }
 
@@ -84,6 +90,7 @@ public class SanPhamService {
                 .updatedAt(entity.getUpdatedAt())
                 .build();
     }
+
     public List<SanPham> getAllRaw() {
         return sanPhamRepository.findAll();
     }

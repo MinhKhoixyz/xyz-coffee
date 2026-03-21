@@ -186,3 +186,5 @@ BEGIN CATCH
     PRINT ERROR_MESSAGE();
 END CATCH;
 GO
+
+SELECT * FROM [dbo].[san_pham];
