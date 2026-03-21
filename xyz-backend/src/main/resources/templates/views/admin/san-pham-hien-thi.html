@@ -66,7 +66,13 @@
                         </td>
                         <td class="text-end pe-4">
                             <button class="btn btn-sm btn-light text-primary border-0 p-2 me-1"
-                                    th:onclick="openEditModal([[${sp.id}]], [[${sp.name}]], [[${sp.categoryId}]], [[${sp.imageUrl}]], [[${sp.description}]], [[${sp.isActive}]])">
+                                    th:data-id="${sp.id}"
+                                    th:data-name="${sp.name}"
+                                    th:data-category="${sp.categoryId}"
+                                    th:data-image="${sp.imageUrl}"
+                                    th:data-desc="${sp.description}"
+                                    th:data-active="${sp.isActive}"
+                                    onclick="openEditModal(this.dataset.id, this.dataset.name, this.dataset.category, this.dataset.image, this.dataset.desc, this.dataset.active)">
                                 <i class='bx bx-edit-alt fs-5'></i>
                             </button>
                             <a th:href="@{/san-pham/delete/{id}(id=${sp.id})}" class="btn btn-sm btn-light text-danger border-0 p-2"

@@ -18,13 +18,16 @@ public class SanPhamKichCoController {
     @GetMapping("/hien-thi")
     public String hienThi(Model model,
                           @RequestParam(defaultValue = "") String keyword,
-                          @RequestParam(defaultValue = "0") int page) {
-        var pageKichCo = service.getAll(keyword, page, 5);
+                          @RequestParam(value = "page", defaultValue = "1") int page,
+                          @RequestParam(value = "size", defaultValue = "5") int size) {
+
+        var pageKichCo = service.getAll(keyword, page - 1, size);
 
         model.addAttribute("listKichCo", pageKichCo.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", pageKichCo.getTotalPages());
-        model.addAttribute("totalElements", pageKichCo.getTotalElements()); // THÊM DÒNG NÀY
+        model.addAttribute("totalItems", pageKichCo.getTotalElements());
+        model.addAttribute("pageSize", size);
         model.addAttribute("keyword", keyword);
         model.addAttribute("listSanPham", sanPhamService.getAllRaw());
         model.addAttribute("kichCoRequest", new KichCoRequest());
