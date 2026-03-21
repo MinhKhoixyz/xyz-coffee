@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/san-pham")
@@ -49,8 +50,9 @@ public class SanPhamController {
     }
 
     @PostMapping("/save")
-    public String saveOrUpdate(@ModelAttribute("sanPhamRequest") SanPhamRequest request) {
-        sanPhamService.saveOrUpdate(request);
+    public String saveOrUpdate(@ModelAttribute("sanPhamRequest") SanPhamRequest request,
+                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
+        sanPhamService.saveOrUpdate(request, imageFile);
         return "redirect:/san-pham/hien-thi";
     }
 

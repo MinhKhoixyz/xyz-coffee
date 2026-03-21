@@ -52,13 +52,13 @@
                             </div>
                         </td>
                         <td>
-                                <span class="badge rounded-pill px-3 py-2 fw-medium border shadow-sm"
-                                      th:style="${sp.categoryName == 'Cà Phê' ? 'background-color: #0b0b0b; color: #ffffff; border-color: #2a2a2a;' :
-                                                 (sp.categoryName == 'Trà' ? 'background-color: #b5cfae; color: #223c19; border-color: #9cb596;' :
-                                                 (sp.categoryName == 'Freeze' ? 'background-color: #cff0ef; color: #134f4d; border-color: #aed9d7;' :
-                                                 'background-color: #faeed3; color: #4f4223; border-color: #e3d5b8;'))}"
-                                      th:text="${sp.categoryName}">
-                                </span>
+                            <span class="badge rounded-pill px-3 py-2 fw-medium border shadow-sm"
+                                  th:style="${sp.categoryName == 'Cà Phê' ? 'background-color: #0b0b0b; color: #ffffff; border-color: #2a2a2a;' :
+                                             (sp.categoryName == 'Trà' ? 'background-color: #b5cfae; color: #223c19; border-color: #9cb596;' :
+                                             (sp.categoryName == 'Freeze' ? 'background-color: #cff0ef; color: #134f4d; border-color: #aed9d7;' :
+                                             'background-color: #faeed3; color: #4f4223; border-color: #e3d5b8;'))}"
+                                  th:text="${sp.categoryName}">
+                            </span>
                         </td>
                         <td class="text-center">
                             <span th:if="${sp.isActive}" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 rounded-2">Đang bán</span>
@@ -94,9 +94,7 @@
                         <a class="page-link" th:href="@{/san-pham/hien-thi(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}"><i class='bx bx-chevron-left'></i></a>
                     </li>
 
-                    <th:block th:with="
-                        start=${currentPage > 2 ? (currentPage + 2 > totalPages ? (totalPages - 4 > 0 ? totalPages - 4 : 1) : currentPage - 2) : 1},
-                        end=${start + 4 > totalPages ? totalPages : start + 4}">
+                    <th:block th:with="start=${currentPage > 2 ? (currentPage + 2 > totalPages ? (totalPages - 4 > 0 ? totalPages - 4 : 1) : currentPage - 2) : 1}, end=${start + 4 > totalPages ? totalPages : start + 4}">
                         <li class="page-item" th:each="i : ${#numbers.sequence(start, end)}" th:classappend="${currentPage == i ? 'active' : ''}">
                             <a class="page-link" th:href="@{/san-pham/hien-thi(page=${i}, size=${pageSize}, keyword=${keyword})}" th:text="${i}"></a>
                         </li>
@@ -128,13 +126,15 @@
     <div class="modal fade" id="sanPhamModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow">
-                <form th:action="@{/san-pham/save}" th:object="${sanPhamRequest}" method="post">
+                <form th:action="@{/san-pham/save}" th:object="${sanPhamRequest}" method="post" enctype="multipart/form-data">
                     <div class="modal-header border-bottom-0 pb-0">
                         <h5 class="modal-title fw-bold text-dark" id="modalTitle">Thêm sản phẩm mới</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" id="modalId" th:field="*{id}">
+                        <input type="hidden" id="modalImageUrl" th:field="*{imageUrl}">
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Tên sản phẩm <span class="text-danger">*</span></label>
@@ -148,10 +148,20 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Đường dẫn hình ảnh (URL)</label>
-                            <input type="text" class="form-control bg-light border-0" id="modalImageUrl" th:field="*{imageUrl}">
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Hình ảnh sản phẩm</label>
+                                <input type="file" name="imageFile" class="form-control bg-light border-0" id="modalImageFile" accept="image/png, image/jpeg, image/jpg">
+                                <small class="text-muted" style="font-size: 0.75rem;">Hỗ trợ định dạng JPG, PNG. Bỏ trống nếu không muốn thay đổi ảnh cũ.</small>
+                            </div>
+                            <div class="col-md-4 mb-3 d-flex justify-content-center align-items-center">
+                                <div id="imagePreviewContainer" class="text-center" style="display: none;">
+                                    <img id="imagePreview" src="" alt="Preview" class="img-thumbnail border-0 shadow-sm" style="max-height: 100px; object-fit: cover; border-radius: 12px;">
+                                </div>
+                            </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Mô tả chi tiết</label>
                             <textarea class="form-control bg-light border-0" id="modalDescription" th:field="*{description}" rows="3"></textarea>
@@ -169,7 +179,16 @@
             </div>
         </div>
     </div>
+
     <script>
+        document.getElementById('modalImageFile').addEventListener('change', function(event) {
+            const [file] = event.target.files;
+            if (file) {
+                document.getElementById('imagePreview').src = URL.createObjectURL(file);
+                document.getElementById('imagePreviewContainer').style.display = 'block';
+            }
+        });
+
         function openAddModal() {
             document.getElementById('modalTitle').innerText = 'Thêm sản phẩm mới';
             document.getElementById('modalId').value = '';
@@ -178,6 +197,10 @@
             document.getElementById('modalImageUrl').value = '';
             document.getElementById('modalDescription').value = '';
             document.getElementById('modalIsActive').checked = true;
+
+            document.getElementById('modalImageFile').value = '';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+
             var modal = new bootstrap.Modal(document.getElementById('sanPhamModal'));
             modal.show();
         }
@@ -189,6 +212,16 @@
             document.getElementById('modalImageUrl').value = imageUrl || '';
             document.getElementById('modalDescription').value = description || '';
             document.getElementById('modalIsActive').checked = (isActive === true || isActive === 'true');
+
+            document.getElementById('modalImageFile').value = '';
+
+            if (imageUrl) {
+                document.getElementById('imagePreview').src = imageUrl;
+                document.getElementById('imagePreviewContainer').style.display = 'block';
+            } else {
+                document.getElementById('imagePreviewContainer').style.display = 'none';
+            }
+
             var modal = new bootstrap.Modal(document.getElementById('sanPhamModal'));
             modal.show();
         }
