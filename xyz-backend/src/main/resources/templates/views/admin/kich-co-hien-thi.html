@@ -1,0 +1,213 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark m-0">Quản lý Giá & Kích cỡ</h4>
+        </div>
+        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill shadow-sm border">
+            <span class="text-muted" style="font-size: 0.9rem;">Xin chào, <strong
+                    class="text-dark">admin</strong></span>
+            <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Avatar" class="rounded-circle"
+                 width="32" height="32">
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary shadow-sm fw-medium px-3 d-flex align-items-center gap-1"
+                    onclick="openAddModal()">
+                <i class='bx bx-plus fs-5'></i> Thêm mới
+            </button>
+
+            <form th:action="@{/kich-co/hien-thi}" method="get" class="m-0">
+                <div class="input-group input-group-sm" style="width: 300px;">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class='bx bx-search'></i></span>
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           class="form-control border-start-0 bg-light shadow-none"
+                           placeholder="Tìm sản phẩm hoặc size...">
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted"
+                           style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="fw-semibold py-3 ps-4" style="width: 30%;">Sản phẩm</th>
+                        <th class="fw-semibold py-3" style="width: 20%;">Kích cỡ</th>
+                        <th class="fw-semibold py-3" style="width: 20%;">Giá bán</th>
+                        <th class="fw-semibold py-3 text-center" style="width: 20%;">Trạng thái</th>
+                        <th class="fw-semibold py-3 text-end pe-4" style="width: 10%;">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                    <tr th:if="${#lists.isEmpty(listKichCo)}">
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class='bx bx-coin-stack fs-1 text-light mb-2'></i>
+                            <p class="mb-0">Không có dữ liệu giá.</p>
+                        </td>
+                    </tr>
+                    <tr th:each="kc : ${listKichCo}">
+                        <td class="ps-4">
+                            <span class="text-dark fw-bold fs-6" th:text="${kc.productName}"></span>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border px-2 py-1" th:text="${kc.sizeName}"></span>
+                        </td>
+                        <td>
+                            <span class="text-primary fw-bold"
+                                  th:text="${#numbers.formatDecimal(kc.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                        </td>
+                        <td class="text-center">
+                            <span th:if="${kc.isActive}"
+                                  class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 rounded-2">Đang bán</span>
+                            <span th:unless="${kc.isActive}"
+                                  class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1 rounded-2">Ngừng bán</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-light text-primary border-0 p-2 me-1"
+                                    th:onclick="openEditModal([[${kc.id}]], [[${kc.productId}]], [[${kc.sizeName}]], [[${kc.price}]], [[${kc.isActive}]])"
+                                    data-bs-toggle="tooltip" title="Sửa">
+                                <i class='bx bx-edit-alt fs-5'></i>
+                            </button>
+                            <a th:href="@{/kich-co/delete/{id}(id=${kc.id})}"
+                               class="btn btn-sm btn-light text-danger border-0 p-2"
+                               data-bs-toggle="tooltip" title="Xóa"
+                               onclick="return confirm('Bạn chắc chắn muốn xóa cấu hình giá này?');">
+                                <i class='bx bx-trash fs-5'></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white border-top py-3 px-4 d-flex justify-content-center align-items-center"
+             th:if="${totalPages > 0}">
+            <div class="d-flex align-items-center gap-4">
+
+                <nav>
+                    <ul class="pagination pagination-sm m-0 border-0 align-items-center gap-1">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link border-0 bg-transparent text-muted p-1"
+                               th:href="@{/kich-co/hien-thi(page=0, keyword=${keyword})}">&laquo;</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link border-0 bg-transparent text-muted p-1"
+                               th:href="@{/kich-co/hien-thi(page=${currentPage - 1}, keyword=${keyword})}">&lsaquo;</a>
+                        </li>
+
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:if="${i >= currentPage - 2 && i <= currentPage + 2}">
+                            <a class="page-link border-0 fw-bold d-flex align-items-center justify-content-center p-0"
+                               style="width: 30px; height: 30px; border-radius: 50%;"
+                               th:classappend="${i == currentPage} ? 'bg-primary text-white shadow-sm' : 'bg-transparent text-dark'"
+                               th:href="@{/kich-co/hien-thi(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
+                        </li>
+
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link border-0 bg-transparent text-muted p-1"
+                               th:href="@{/kich-co/hien-thi(page=${currentPage + 1}, keyword=${keyword})}">&rsaquo;</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link border-0 bg-transparent text-muted p-1"
+                               th:href="@{/kich-co/hien-thi(page=${totalPages - 1}, keyword=${keyword})}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="text-muted" style="font-size: 0.9rem;">
+                    Hiển thị <span th:text="${(currentPage * 5) + 1}"></span> đến
+                    <span th:text="${(currentPage + 1) * 5 < totalElements ? (currentPage + 1) * 5 : totalElements}"></span>
+                    trong <span th:text="${totalElements}"></span> sản phẩm
+                </div>
+
+                <div>
+                    <select class="form-select form-select-sm border shadow-none text-muted"
+                            style="width: 65px; cursor: pointer;">
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="kichCoModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <form th:action="@{/kich-co/save}" th:object="${kichCoRequest}" method="post">
+                    <div class="modal-header border-bottom-0 pb-0">
+                        <h5 class="modal-title fw-bold text-dark" id="modalTitle">Thêm cấu hình giá</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="modalId" th:field="*{id}">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Sản phẩm <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-select bg-light border-0" id="modalProductId" th:field="*{productId}"
+                                    required>
+                                <option value="">-- Chọn sản phẩm --</option>
+                                <option th:each="sp : ${listSanPham}" th:value="${sp.id}" th:text="${sp.name}"></option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Tên
+                                    Size</label>
+                                <input type="text" class="form-control bg-light border-0" id="modalSizeName"
+                                       th:field="*{sizeName}" placeholder="Vd: S, M, L..." required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Giá tiền
+                                    (VNĐ)</label>
+                                <input type="number" class="form-control bg-light border-0" id="modalPrice"
+                                       th:field="*{price}" required min="0">
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check form-switch mt-4">
+                            <input class="form-check-input" type="checkbox" role="switch" id="modalIsActive"
+                                   th:field="*{isActive}">
+                            <label class="form-check-label fw-medium" for="modalIsActive">Đang hoạt động</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">Lưu lại</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Thêm cấu hình giá mới';
+            document.getElementById('modalId').value = '';
+            document.getElementById('modalProductId').value = '';
+            document.getElementById('modalSizeName').value = '';
+            document.getElementById('modalPrice').value = '0';
+            document.getElementById('modalIsActive').checked = true;
+            var modal = new bootstrap.Modal(document.getElementById('kichCoModal'));
+            modal.show();
+        }
+
+        function openEditModal(id, productId, size, price, active) {
+            document.getElementById('modalTitle').innerText = 'Cập nhật giá bán';
+            document.getElementById('modalId').value = id;
+            document.getElementById('modalProductId').value = productId;
+            document.getElementById('modalSizeName').value = size;
+            document.getElementById('modalPrice').value = price;
+            document.getElementById('modalIsActive').checked = (active === true || active === 'true');
+            var modal = new bootstrap.Modal(document.getElementById('kichCoModal'));
+            modal.show();
+        }
+    </script>
+</section>
+</html>

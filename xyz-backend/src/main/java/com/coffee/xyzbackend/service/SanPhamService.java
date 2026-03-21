@@ -84,4 +84,7 @@ public class SanPhamService {
                 .updatedAt(entity.getUpdatedAt())
                 .build();
     }
+    public List<SanPham> getAllRaw() {
+        return sanPhamRepository.findAll();
+    }
 }
