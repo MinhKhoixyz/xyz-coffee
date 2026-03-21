@@ -1,0 +1,197 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark m-0">Quản lý sản phẩm</h4>
+        </div>
+        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill shadow-sm border">
+            <span class="text-muted" style="font-size: 0.9rem;">Xin chào, <strong class="text-dark">admin</strong></span>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden mb-4">
+        <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary shadow-sm fw-medium px-3 d-flex align-items-center gap-1" onclick="openAddModal()">
+                <i class='bx bx-plus fs-5'></i> Thêm mới
+            </button>
+            <form th:action="@{/san-pham/hien-thi}" method="get" class="m-0">
+                <div class="input-group input-group-sm" style="width: 300px;">
+                    <button type="submit" class="input-group-text bg-light border-end-0 text-muted"><i class='bx bx-search'></i></button>
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control border-start-0 bg-light shadow-none" placeholder="Tìm tên sản phẩm...">
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="fw-semibold py-3 ps-4" style="width: 30%;">Tên sản phẩm</th>
+                        <th class="fw-semibold py-3" style="width: 15%;">Hình ảnh</th>
+                        <th class="fw-semibold py-3" style="width: 20%;">Danh mục</th>
+                        <th class="fw-semibold py-3 text-center" style="width: 20%;">Trạng thái</th>
+                        <th class="fw-semibold py-3 text-end pe-4" style="width: 15%;">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                    <tr th:if="${#lists.isEmpty(listSanPham)}">
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class='bx bx-package fs-1 text-light mb-2'></i>
+                            <p class="mb-0">Chưa có sản phẩm nào.</p>
+                        </td>
+                    </tr>
+                    <tr th:each="sp : ${listSanPham}">
+                        <td class="ps-4"><span class="text-dark fw-bold fs-6" th:text="${sp.name}"></span></td>
+                        <td>
+                            <img th:if="${sp.imageUrl != null and !sp.imageUrl.isEmpty()}" th:src="@{${sp.imageUrl}}"
+                                 alt="Img" class="rounded-3 border shadow-sm" width="48" height="48" style="object-fit: cover;">
+                            <div th:unless="${sp.imageUrl != null and !sp.imageUrl.isEmpty()}"
+                                 class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border"
+                                 style="width: 48px; height: 48px; font-size: 0.7rem;">Trống
+                            </div>
+                        </td>
+                        <td>
+                                <span class="badge rounded-pill px-3 py-2 fw-medium border shadow-sm"
+                                      th:style="${sp.categoryName == 'Cà Phê' ? 'background-color: #0b0b0b; color: #ffffff; border-color: #2a2a2a;' :
+                                                 (sp.categoryName == 'Trà' ? 'background-color: #b5cfae; color: #223c19; border-color: #9cb596;' :
+                                                 (sp.categoryName == 'Freeze' ? 'background-color: #cff0ef; color: #134f4d; border-color: #aed9d7;' :
+                                                 'background-color: #faeed3; color: #4f4223; border-color: #e3d5b8;'))}"
+                                      th:text="${sp.categoryName}">
+                                </span>
+                        </td>
+                        <td class="text-center">
+                            <span th:if="${sp.isActive}" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 rounded-2">Đang bán</span>
+                            <span th:unless="${sp.isActive}" class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1 rounded-2">Ngừng bán</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-light text-primary border-0 p-2 me-1"
+                                    th:onclick="openEditModal([[${sp.id}]], [[${sp.name}]], [[${sp.categoryId}]], [[${sp.imageUrl}]], [[${sp.description}]], [[${sp.isActive}]])">
+                                <i class='bx bx-edit-alt fs-5'></i>
+                            </button>
+                            <a th:href="@{/san-pham/delete/{id}(id=${sp.id})}" class="btn btn-sm btn-light text-danger border-0 p-2"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                <i class='bx bx-trash fs-5'></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${totalItems > 0}" class="card-footer bg-white border-top py-3 d-flex justify-content-center align-items-center gap-4">
+                <ul class="pv-pagination">
+                    <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/san-pham/hien-thi(page=1, size=${pageSize}, keyword=${keyword})}"><i class='bx bx-chevrons-left'></i></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/san-pham/hien-thi(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword})}"><i class='bx bx-chevron-left'></i></a>
+                    </li>
+
+                    <th:block th:with="
+                        start=${currentPage > 2 ? (currentPage + 2 > totalPages ? (totalPages - 4 > 0 ? totalPages - 4 : 1) : currentPage - 2) : 1},
+                        end=${start + 4 > totalPages ? totalPages : start + 4}">
+                        <li class="page-item" th:each="i : ${#numbers.sequence(start, end)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" th:href="@{/san-pham/hien-thi(page=${i}, size=${pageSize}, keyword=${keyword})}" th:text="${i}"></a>
+                        </li>
+                    </th:block>
+
+                    <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/san-pham/hien-thi(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword})}"><i class='bx bx-chevron-right'></i></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/san-pham/hien-thi(page=${totalPages}, size=${pageSize}, keyword=${keyword})}"><i class='bx bx-chevrons-right'></i></a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted" style="font-size: 0.85rem;">
+                        Hiển thị <span th:text="${(currentPage - 1) * pageSize + 1}"></span> đến <span th:text="${currentPage * pageSize > totalItems ? totalItems : currentPage * pageSize}"></span> trong <span th:text="${totalItems}"></span> sản phẩm
+                    </span>
+                    <select class="form-select form-select-sm shadow-none border" style="width: 65px; cursor: pointer;" onchange="changePageSize(this.value)">
+                        <option value="5" th:selected="${pageSize == 5}">5</option>
+                        <option value="10" th:selected="${pageSize == 10}">10</option>
+                        <option value="25" th:selected="${pageSize == 25}">25</option>
+                        <option value="50" th:selected="${pageSize == 50}">50</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sanPhamModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow">
+                <form th:action="@{/san-pham/save}" th:object="${sanPhamRequest}" method="post">
+                    <div class="modal-header border-bottom-0 pb-0">
+                        <h5 class="modal-title fw-bold text-dark" id="modalTitle">Thêm sản phẩm mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="modalId" th:field="*{id}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Tên sản phẩm <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control bg-light border-0" id="modalName" th:field="*{name}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Loại sản phẩm <span class="text-danger">*</span></label>
+                                <select class="form-select bg-light border-0" id="modalCategoryId" th:field="*{categoryId}" required>
+                                    <option value="">-- Chọn danh mục --</option>
+                                    <option th:each="loai : ${listLoaiSanPham}" th:value="${loai.id}" th:text="${loai.name}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Đường dẫn hình ảnh (URL)</label>
+                            <input type="text" class="form-control bg-light border-0" id="modalImageUrl" th:field="*{imageUrl}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Mô tả chi tiết</label>
+                            <textarea class="form-control bg-light border-0" id="modalDescription" th:field="*{description}" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 form-check form-switch mt-4">
+                            <input class="form-check-input" type="checkbox" role="switch" id="modalIsActive" th:field="*{isActive}">
+                            <label class="form-check-label fw-medium" for="modalIsActive">Đang kinh doanh</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">Lưu lại</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Thêm sản phẩm mới';
+            document.getElementById('modalId').value = '';
+            document.getElementById('modalName').value = '';
+            document.getElementById('modalCategoryId').value = '';
+            document.getElementById('modalImageUrl').value = '';
+            document.getElementById('modalDescription').value = '';
+            document.getElementById('modalIsActive').checked = true;
+            var modal = new bootstrap.Modal(document.getElementById('sanPhamModal'));
+            modal.show();
+        }
+        function openEditModal(id, name, categoryId, imageUrl, description, isActive) {
+            document.getElementById('modalTitle').innerText = 'Cập nhật thông tin sản phẩm';
+            document.getElementById('modalId').value = id;
+            document.getElementById('modalName').value = name;
+            document.getElementById('modalCategoryId').value = categoryId;
+            document.getElementById('modalImageUrl').value = imageUrl || '';
+            document.getElementById('modalDescription').value = description || '';
+            document.getElementById('modalIsActive').checked = (isActive === true || isActive === 'true');
+            var modal = new bootstrap.Modal(document.getElementById('sanPhamModal'));
+            modal.show();
+        }
+        function changePageSize(size) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('size', size);
+            urlParams.set('page', '1');
+            window.location.href = window.location.pathname + '?' + urlParams.toString();
+        }
+    </script>
+</section>
+</html>

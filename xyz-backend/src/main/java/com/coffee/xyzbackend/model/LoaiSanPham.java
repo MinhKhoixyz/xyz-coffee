@@ -1,7 +1,6 @@
 package com.coffee.xyzbackend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,32 +11,28 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "account")
+@Table(name = "loai_san_pham")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Account {
+public class LoaiSanPham {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "VARCHAR(36)")
     String id;
 
-    @Column(name = "username", nullable = false, unique = true)
-    String username;
+    @Column(name = "name", length = 100, nullable = false, unique = true)
+    String name;
 
-    @Column(name = "password", nullable = false)
-    String password;
-
-    @Email
-    @Column(name = "email", nullable = false, unique = true)
-    String email;
-
-    @Column(name = "role")
-    String role;
+    @Column(name = "description", length = 255)
+    String description;
 
     @Column(name = "is_active")
     Boolean isActive;
 
-    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     LocalDateTime createdAt;
 
     @UpdateTimestamp
