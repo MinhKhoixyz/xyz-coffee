@@ -8,13 +8,13 @@
 
 ## 📌 Giới thiệu
 **XYZ COFFEE** là hệ thống quản trị nội bộ dành cho chuỗi cửa hàng cà phê. 
-Dự án tập trung vào kiến trúc Monolithic (SSR), tối ưu hiệu năng, chuẩn hóa luồng dữ liệu và thiết lập tiêu chuẩn bảo mật khắt khe.
+Dự án được tạo ra bởi mục đích giúp quán coffee tối ưu những công việc phức tạp.
 
 ## 💻 Tech Stack
-- **Backend:** Java 23, Spring Boot (Web, Data JPA, Validation).
-- **Frontend:** HTML5, Bootstrap 5, Thymeleaf, Vanilla JS, CSS Variables (Custom Theme Engine).
-- **Database:** Microsoft SQL Server.
-- **Bảo mật:** JSON Web Token (JWT), HttpOnly Cookie, Spring Interceptor.
+- **Backend:** Java 23, Spring Boot
+- **Frontend:** HTML5, Bootstrap 5, Thymeleaf, Vanilla JS
+- **Database:** Microsoft SQL Server
+- **Bảo mật:** JWT
 
 ## 📂 Cấu trúc thư mục (Backend)
 ```text

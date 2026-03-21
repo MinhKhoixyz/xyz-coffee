@@ -32,7 +32,7 @@ GO
 CREATE TABLE [dbo].[loai_san_pham] (
     id VARCHAR(36) PRIMARY KEY DEFAULT NEWID(),
     name NVARCHAR(100) NOT NULL UNIQUE, 
-    description NVARCHAR(255),
+    description NVARCHAR(MAX),
     is_active BIT DEFAULT 1,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE()
@@ -78,10 +78,10 @@ BEGIN TRY
     DECLARE @CatOtherId VARCHAR(36) = NEWID();
 
     INSERT INTO [dbo].[loai_san_pham] (id, name, description) VALUES
-        (@CatCoffeeId, N'Cà Phê', N''),
-        (@CatTeaId, N'Trà', N''),
-        (@CatFreezeId, N'Freeze', N''),
-        (@CatOtherId, N'Khác', N'');
+        (@CatCoffeeId, N'Cà Phê', N'Sự kết hợp hoàn hảo giữa hạt cà phê Robusta & Arabica thượng hạng được trồng trên những vùng cao nguyên Việt Nam màu mỡ, qua những bí quyết rang xay độc đáo, Highlands Coffee chúng tôi tự hào giới thiệu những dòng sản phẩm Cà phê mang hương vị đậm đà và tinh tế.'),
+        (@CatTeaId, N'Trà', N'Hương vị tự nhiên, thơm ngon của Trà Việt với phong cách hiện đại tại Highlands Coffee sẽ giúp bạn gợi mở vị giác của bản thân và tận hưởng một cảm giác thật khoan khoái, tươi mới.'),
+        (@CatFreezeId, N'Freeze', N'Sảng khoái với thức uống đá xay phong cách Việt. Freeze là thức uống đá xay mát lạnh được pha chế từ những nguyên liệu thuần túy của Việt Nam.'),
+        (@CatOtherId, N'Khác', N'Sẽ càng ngon miệng hơn khi bạn kết hợp đồ uống với những chiếc bánh ngọt thơm ngon được làm thủ công hàng ngày ngay tại bếp bánh của Highlands Coffee, và cũng đừng quên sắm cho mình bộ bí kíp pha cà phê tại nhà gồm Phin inox, ly sứ Mosaic và cà phê gói Truyền thống mỗi khi có thời gian rảnh rỗi nhé.');
 
     DECLARE @AmDaId VARCHAR(36) = NEWID();
     DECLARE @BacSiuId VARCHAR(36) = NEWID();
