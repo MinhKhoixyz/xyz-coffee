@@ -20,7 +20,7 @@ public class SanPhamKichCoService {
 
     public Page<KichCoResponse> getAll(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repository.search(keyword, pageable).map(this::mapToResponse);
+        return repository.searchByKeyword(keyword, pageable).map(this::mapToResponse);
     }
 
     @Transactional
