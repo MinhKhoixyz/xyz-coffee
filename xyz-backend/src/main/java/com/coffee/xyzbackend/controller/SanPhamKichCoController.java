@@ -9,13 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/kich-co")
+@RequestMapping("/san-pham-kich-co")
 @RequiredArgsConstructor
 public class SanPhamKichCoController {
     private final SanPhamKichCoService service;
     private final SanPhamService sanPhamService;
 
-    @GetMapping("/hien-thi")
+    @GetMapping()
     public String hienThi(Model model,
                           @RequestParam(defaultValue = "") String keyword,
                           @RequestParam(value = "page", defaultValue = "1") int page,
@@ -32,18 +32,18 @@ public class SanPhamKichCoController {
         model.addAttribute("listSanPham", sanPhamService.getAllRaw());
         model.addAttribute("kichCoRequest", new KichCoRequest());
 
-        return "views/admin/kich-co-hien-thi";
+        return "views/admin/san-pham-kich-co";
     }
 
     @PostMapping("/save")
     public String save(@ModelAttribute KichCoRequest request) {
         service.save(request);
-        return "redirect:/kich-co/hien-thi";
+        return "redirect:/san-pham-kich-co";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         service.delete(id);
-        return "redirect:/kich-co/hien-thi";
+        return "redirect:/san-pham-kich-co";
     }
 }

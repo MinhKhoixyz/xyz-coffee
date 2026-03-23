@@ -38,13 +38,13 @@ public class BanHangController {
     public ResponseEntity<?> thanhToan(@RequestBody HoaDonRequest request, HttpServletRequest httpRequest) {
         try {
             String currentUsername = (String) httpRequest.getAttribute("username");
-            banHangService.taoHoaDon(request, currentUsername);
 
             if (currentUsername == null) {
                 return ResponseEntity.status(401).body("Lỗi: Không tìm thấy phiên đăng nhập của nhân viên!");
             }
 
             banHangService.taoHoaDon(request, currentUsername);
+
             return ResponseEntity.ok("Thanh toán thành công!");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi thanh toán: " + e.getMessage());
