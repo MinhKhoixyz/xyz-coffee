@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
     <title>Sidebar</title>
@@ -73,7 +73,7 @@
     </style>
 
     <div class="p-4 text-center mb-1 d-none d-lg-block">
-        <a th:href="@{/admin/ban-hang}">
+        <a th:href="@{/ban-hang}">
             <img th:src="@{/assets/img/system/xyz-logo.jpg}" alt="XYZ Coffee"
                  class="img-fluid protect-img" style="max-width: 90px; opacity: 0.95;"
                  draggable="false" oncontextmenu="return false;"/>
@@ -83,7 +83,7 @@
     <ul class="nav flex-column px-3 mb-auto list-unstyled">
 
         <li>
-            <a th:href="@{/admin/ban-hang}" class="sidebar-item d-flex align-items-center">
+            <a th:href="@{/ban-hang}" class="sidebar-item d-flex align-items-center">
                 <i class="bx bx-store-alt sidebar-icon"></i>
                 <span>Bán hàng (POS)</span>
             </a>

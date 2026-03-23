@@ -23,6 +23,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         Cookie jwtCookie = WebUtils.getCookie(request, "accessToken");
 
         if (jwtCookie != null && jwtService.validateToken(jwtCookie.getValue())) {
+            String token = jwtCookie.getValue();
+
+            String username = jwtService.extractUsername(token);
+            request.setAttribute("username", username);
+
             return true;
         }
 

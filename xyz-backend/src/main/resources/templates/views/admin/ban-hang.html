@@ -1,0 +1,422 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
+<section class="h-100">
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden pos-wrapper">
+        <div class="row g-0 h-100">
+
+            <div class="col-lg-7 d-flex flex-column h-100 border-end pt-3">
+                <div class="px-3 pb-3 border-bottom d-flex justify-content-between align-items-center bg-white">
+                    <h5 class="fw-bold text-dark m-0">Thực đơn sản phẩm</h5>
+                    <div class="d-flex gap-2">
+                        <select id="categoryFilter" class="form-select form-select-sm shadow-none cat-select border"
+                                onchange="filterProducts()">
+                            <option value="ALL">Tất cả món</option>
+                            <option th:each="loai : ${listLoaiSanPham}" th:value="${loai.name}"
+                                    th:text="${loai.name}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="product-grid bg-white">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-sm-6 product-item" th:each="sp : ${listSanPham}" th:if="${sp.isActive}"
+                             th:data-category="${sp.loaiSanPham.name}">
+                            <div class="card product-card h-100 border shadow-sm"
+                                 th:data-id="${sp.id}"
+                                 th:data-name="${sp.name}"
+                                 onclick="openSizeModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+
+                                <img th:if="${sp.imageUrl != null and !sp.imageUrl.isEmpty()}"
+                                     th:src="@{${sp.imageUrl}}" class="product-img">
+                                <div th:unless="${sp.imageUrl != null and !sp.imageUrl.isEmpty()}"
+                                     class="product-img bg-light d-flex align-items-center justify-content-center text-muted">
+                                    <i class='bx bx-image fs-1'></i>
+                                </div>
+
+                                <div class="card-body p-2 text-center d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-1 text-truncate" th:text="${sp.name}"
+                                            style="font-size: 0.95rem;"></h6>
+                                        <small class="text-muted d-block mb-2" th:text="${sp.loaiSanPham.name}"></small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary w-100 rounded-pill fw-medium">Chọn
+                                        món
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-flex flex-column h-100 pos-right-col p-3 gap-3">
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white border-bottom py-2 px-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-warning"><i class='bx bx-time-five'></i> Hóa đơn chờ</span>
+                        <span class="badge bg-warning text-dark rounded-pill" id="pendingCount">0</span>
+                    </div>
+                    <div class="card-body p-2" style="max-height: 150px; overflow-y: auto;" id="pendingOrdersContainer">
+                        <div class="text-center text-muted py-3" style="font-size: 0.85rem;" id="emptyPendingMsg">
+                            Không có hóa đơn chờ
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 flex-grow-1 d-flex flex-column">
+                    <div class="card-header bg-white border-bottom py-3 px-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-success"><i class='bx bx-cart'></i> Giỏ hàng</span>
+                        <button class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="clearCart()"><i
+                                class='bx bx-trash'></i> Xóa
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0 overflow-auto flex-grow-1">
+                        <table class="table table-borderless cart-table mb-0">
+                            <thead class="bg-light sticky-top">
+                            <tr>
+                                <th class="ps-3">Món</th>
+                                <th class="text-center" style="width: 100px;">SL</th>
+                                <th class="text-end pe-3" style="width: 110px;">Tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody id="cartContainer">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-5">Chưa chọn món</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-footer bg-white border-top p-3">
+                        <div class="d-flex justify-content-between align-items-end mb-3">
+                            <span class="text-muted fw-bold">TỔNG CỘNG:</span>
+                            <span class="fw-bold text-danger fs-4" id="totalAmount">0đ</span>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <button class="btn btn-hold w-100 py-2 rounded-3" onclick="holdCurrentOrder()">HĐ Chờ
+                                </button>
+                            </div>
+                            <div class="col-8">
+                                <button class="btn btn-success w-100 py-2 fw-bold rounded-3 shadow-sm"
+                                        onclick="openCheckoutModal()">THANH TOÁN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sizeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold text-primary" id="modalProductName">Tên món</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modalProductId">
+                    <div id="sizeOptions" class="d-flex flex-column gap-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="checkoutModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header bg-success text-white border-0 rounded-top-4">
+                    <h5 class="modal-title fw-bold"><i class='bx bx-check-shield'></i> Xác nhận thanh toán</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <h6 class="text-muted mb-1">Cần thanh toán</h6>
+                        <h2 class="text-danger fw-bold m-0" id="checkoutTotalLabel">0đ</h2>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold text-dark mb-2">Phương thức thanh toán:</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check bg-light border p-2 px-3 rounded-3 flex-fill">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="payCash"
+                                       value="CASH" checked onchange="togglePaymentUI()">
+                                <label class="form-check-label fw-medium ms-1" for="payCash" style="cursor: pointer;"><i
+                                        class='bx bx-money text-success'></i> Tiền mặt</label>
+                            </div>
+                            <div class="form-check bg-light border p-2 px-3 rounded-3 flex-fill">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="payTransfer"
+                                       value="TRANSFER" onchange="togglePaymentUI()">
+                                <label class="form-check-label fw-medium ms-1" for="payTransfer"
+                                       style="cursor: pointer;"><i class='bx bx-qr-scan text-primary'></i> Chuyển khoản</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="cashArea" class="p-3 bg-light rounded-3 border">
+                        <div class="mb-2 d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-medium">Khách đưa:</span>
+                            <div class="input-group input-group-sm w-50">
+                                <input type="number" class="form-control text-end fw-bold" id="customerGiven"
+                                       onkeyup="calculateChange()">
+                                <span class="input-group-text">đ</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-medium">Tiền thừa:</span>
+                            <span class="fw-bold text-primary fs-5" id="customerChange">0đ</span>
+                        </div>
+                    </div>
+
+                    <div id="qrArea" class="text-center p-3 bg-light rounded-3 border" style="display: none;">
+                        <p class="text-muted mb-2 fw-medium">Quét mã QR để thanh toán</p>
+                        <img src="/assets/img/system/qr.jpg" alt="QR Code" class="img-fluid rounded border shadow-sm"
+                             style="max-height: 200px;">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-success px-5 py-2 fw-bold shadow-sm rounded-pill"
+                            onclick="submitCheckout()"><i class='bx bx-check'></i> HOÀN TẤT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let pendingOrders = []; // Mảng lưu các Hóa đơn chờ
+        let currentTotal = 0;
+
+        let sizeModalObj;
+        let checkoutModalObj;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            sizeModalObj = new bootstrap.Modal(document.getElementById('sizeModal'));
+            checkoutModalObj = new bootstrap.Modal(document.getElementById('checkoutModal'));
+        });
+
+        // 1. API Lấy Size
+        function openSizeModal(productId, productName) {
+            document.getElementById('modalProductName').innerText = productName;
+
+            fetch(`/ban-hang/api/kich-co?productId=${productId}`)
+                .then(res => res.json())
+                .then(sizes => {
+                    let html = '';
+                    sizes.forEach(s => {
+                        html += `
+                        <button class="btn btn-outline-primary text-start d-flex justify-content-between align-items-center border-2 rounded-3"
+                                onclick="addToCart('${s.id}', '${productName}', '${s.sizeName}', ${s.price})">
+                            <span class="fw-bold">Size ${s.sizeName}</span>
+                            <span class="fw-bold text-danger">${s.price.toLocaleString('vi-VN')}đ</span>
+                        </button>`;
+                    });
+                    document.getElementById('sizeOptions').innerHTML = html;
+                    sizeModalObj.show();
+                });
+        }
+
+        // 2. Logic Giỏ Hàng
+        function addToCart(sizeId, name, size, price) {
+            let item = cart.find(i => i.productSizeId === sizeId);
+            if (item) item.quantity += 1;
+            else cart.push({productSizeId: sizeId, name: name, size: size, price: price, quantity: 1});
+            sizeModalObj.hide();
+            renderCart();
+        }
+
+        function updateQuantity(sizeId, change) {
+            let item = cart.find(i => i.productSizeId === sizeId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) cart = cart.filter(i => i.productSizeId !== sizeId);
+            }
+            renderCart();
+        }
+
+        function clearCart() {
+            if (cart.length > 0 && confirm("Xóa toàn bộ giỏ hàng?")) {
+                cart = [];
+                renderCart();
+            }
+        }
+
+        function renderCart() {
+            let container = document.getElementById('cartContainer');
+            if (cart.length === 0) {
+                container.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-5"><i class='bx bx-cart fs-1 opacity-50 mb-2'></i><br>Chưa chọn món</td></tr>`;
+                document.getElementById('totalAmount').innerText = '0đ';
+                currentTotal = 0;
+                return;
+            }
+
+            let html = '';
+            currentTotal = 0;
+            cart.forEach(item => {
+                let amount = item.price * item.quantity;
+                currentTotal += amount;
+                html += `
+                <tr>
+                    <td class="ps-3">
+                        <div class="fw-bold text-dark" style="font-size: 0.9rem;">${item.name}</div>
+                        <small class="text-muted">Size ${item.size} - ${item.price.toLocaleString('vi-VN')}đ</small>
+                    </td>
+                    <td class="text-center">
+                        <div class="input-group input-group-sm d-flex justify-content-center">
+                            <button class="btn btn-outline-secondary px-2" onclick="updateQuantity('${item.productSizeId}', -1)">-</button>
+                            <input type="text" class="form-control text-center px-0 bg-white" style="max-width: 35px;" value="${item.quantity}" readonly>
+                            <button class="btn btn-outline-secondary px-2" onclick="updateQuantity('${item.productSizeId}', 1)">+</button>
+                        </div>
+                    </td>
+                    <td class="text-end pe-3 fw-bold text-primary">${amount.toLocaleString('vi-VN')}đ</td>
+                </tr>`;
+            });
+            container.innerHTML = html;
+            document.getElementById('totalAmount').innerText = currentTotal.toLocaleString('vi-VN') + 'đ';
+        }
+
+        // 3. Logic Hóa Đơn Chờ
+        function holdCurrentOrder() {
+            if (cart.length === 0) return alert("Giỏ hàng đang trống!");
+
+            let orderName = "HĐ #" + (pendingOrders.length + 1) + " - " + new Date().toLocaleTimeString('vi-VN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            pendingOrders.push({id: Date.now(), name: orderName, total: currentTotal, items: [...cart]});
+
+            cart = [];
+            renderCart();
+            renderPendingOrders();
+        }
+
+        function openPendingOrder(orderId) {
+            let index = pendingOrders.findIndex(o => o.id === orderId);
+            if (index > -1) {
+                // Nếu giỏ hàng hiện tại đang có đồ, thì lưu nó thành HĐ chờ mới trước khi mở HĐ cũ
+                if (cart.length > 0) holdCurrentOrder();
+
+                cart = pendingOrders[index].items; // Lấy data ra
+                pendingOrders.splice(index, 1); // Xóa khỏi danh sách chờ
+                renderCart();
+                renderPendingOrders();
+            }
+        }
+
+        function renderPendingOrders() {
+            let container = document.getElementById('pendingOrdersContainer');
+            let msg = document.getElementById('emptyPendingMsg');
+            let badge = document.getElementById('pendingCount');
+
+            badge.innerText = pendingOrders.length;
+
+            if (pendingOrders.length === 0) {
+                container.innerHTML = '';
+                container.appendChild(msg);
+                msg.style.display = 'block';
+                return;
+            }
+
+            msg.style.display = 'none';
+            let html = '';
+            pendingOrders.forEach(o => {
+                html += `
+                <div class="d-flex justify-content-between align-items-center p-2 mb-2 bg-light border rounded-3">
+                    <div>
+                        <div class="fw-bold text-dark" style="font-size: 0.85rem;">${o.name}</div>
+                        <div class="text-danger fw-bold" style="font-size: 0.85rem;">${o.total.toLocaleString('vi-VN')}đ</div>
+                    </div>
+                    <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="openPendingOrder(${o.id})">Mở</button>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // 4. Logic Modal Thanh Toán
+        function openCheckoutModal() {
+            if (cart.length === 0) return alert("Vui lòng chọn món để thanh toán!");
+            document.getElementById('checkoutTotalLabel').innerText = currentTotal.toLocaleString('vi-VN') + 'đ';
+            document.getElementById('customerGiven').value = '';
+            document.getElementById('customerChange').innerText = '0đ';
+            document.getElementById('payCash').checked = true;
+            togglePaymentUI();
+            checkoutModalObj.show();
+        }
+
+        function togglePaymentUI() {
+            let method = document.querySelector('input[name="paymentMethod"]:checked').value;
+            if (method === 'CASH') {
+                document.getElementById('cashArea').style.display = 'block';
+                document.getElementById('qrArea').style.display = 'none';
+            } else {
+                document.getElementById('cashArea').style.display = 'none';
+                document.getElementById('qrArea').style.display = 'block';
+            }
+        }
+
+        function calculateChange() {
+            let given = parseInt(document.getElementById('customerGiven').value) || 0;
+            let change = given - currentTotal;
+            document.getElementById('customerChange').innerText = (change > 0 ? change.toLocaleString('vi-VN') : 0) + 'đ';
+            if (change < 0) document.getElementById('customerChange').classList.replace('text-primary', 'text-danger');
+            else document.getElementById('customerChange').classList.replace('text-danger', 'text-primary');
+        }
+
+        // 5. Submit xuống Backend
+        function submitCheckout() {
+            let method = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            if (method === 'CASH') {
+                let given = parseInt(document.getElementById('customerGiven').value) || 0;
+                if (given < currentTotal) return alert("Số tiền khách đưa chưa đủ!");
+            }
+
+            let requestBody = {
+                customerId: null,
+                totalAmount: currentTotal,
+                paymentMethod: method,
+                note: "",
+                chiTietList: cart.map(item => ({
+                    productSizeId: item.productSizeId,
+                    quantity: item.quantity,
+                    price: item.price
+                }))
+            };
+
+            fetch('/ban-hang/api/thanh-toan', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(requestBody)
+            })
+                .then(res => {
+                    if (res.ok) {
+                        alert("Thanh toán thành công!");
+                        cart = [];
+                        renderCart();
+                        checkoutModalObj.hide();
+                    } else {
+                        res.text().then(text => alert(text));
+                    }
+                })
+                .catch(err => console.error("Lỗi:", err));
+        }
+
+        function filterProducts() {
+            let selectedCategory = document.getElementById('categoryFilter').value;
+            let products = document.querySelectorAll('.product-item');
+
+            products.forEach(item => {
+                let itemCategory = item.getAttribute('data-category');
+                if (selectedCategory === 'ALL' || itemCategory === selectedCategory) {
+                    item.style.display = 'block'; // Hiện món
+                } else {
+                    item.style.display = 'none'; // Ẩn món
+                }
+            });
+        }
+    </script>
+</section>
+</html>
