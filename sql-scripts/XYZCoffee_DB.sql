@@ -6,11 +6,12 @@ GO
 
 USE [XYZ_Coffee];
 GO
-
-DROP TABLE IF EXISTS [dbo].[san_pham_kich_co];
-DROP TABLE IF EXISTS [dbo].[san_pham];
-DROP TABLE IF EXISTS [dbo].[loai_san_pham];
 DROP TABLE IF EXISTS [dbo].[account];
+DROP TABLE IF EXISTS [dbo].[loai_san_pham];
+DROP TABLE IF EXISTS [dbo].[san_pham];
+DROP TABLE IF EXISTS [dbo].[san_pham_kich_co];
+DROP TABLE IF EXISTS [dbo].[hoa_don];
+DROP TABLE IF EXISTS [dbo].[hoa_don_chi_tiet];
 GO 
 
 CREATE TABLE [dbo].[account] (
@@ -187,4 +188,30 @@ BEGIN CATCH
 END CATCH;
 GO
 
-SELECT * FROM [dbo].[san_pham];
+CREATE TABLE [dbo].[hoa_don] (
+    id VARCHAR(36) PRIMARY KEY DEFAULT NEWID(),
+    account_id VARCHAR(36) NOT NULL, -- Nhân viên lập hóa đơn (BẮT BUỘC)
+    customer_id VARCHAR(36) NULL,    -- Người mua 
+    total_amount INT DEFAULT 0,
+    status VARCHAR(20) DEFAULT 'PAID', -- Trạng thái: PENDING, PAID, CANCELLED
+    payment_method VARCHAR(20) DEFAULT 'CASH', -- Phương thức: CASH (Tiền mặt), TRANSFER (Chuyển khoản)
+    note NVARCHAR(255),
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_HoaDon_Account FOREIGN KEY (account_id) REFERENCES [dbo].[account](id)
+);
+GO
+
+CREATE TABLE [dbo].[hoa_don_chi_tiet] (
+    id VARCHAR(36) PRIMARY KEY DEFAULT NEWID(),
+    order_id VARCHAR(36) NOT NULL,
+    product_size_id VARCHAR(36) NOT NULL, -- Link đến [dbo].[san_pham_kich_co]
+    quantity INT NOT NULL CHECK (quantity > 0),
+    price INT NOT NULL,
+    total_amount INT NOT NULL, -- Thành tiền (quantity * price)
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_ChiTiet_HoaDon FOREIGN KEY (order_id) REFERENCES [dbo].[hoa_don](id) ON DELETE CASCADE,
+    CONSTRAINT FK_ChiTiet_KichCo FOREIGN KEY (product_size_id) REFERENCES [dbo].[san_pham_kich_co](id)
+);
+GO

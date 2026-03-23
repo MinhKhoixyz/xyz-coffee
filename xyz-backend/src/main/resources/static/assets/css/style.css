@@ -1,6 +1,3 @@
-/* =========================================
-   THEME VARIABLES (Hệ thống màu cấu hình)
-========================================= */
 :root {
     --surface-ground: #0f172a;
     --surface-card: #1e293b;
@@ -252,3 +249,104 @@ input:-webkit-autofill:active {
     color: #ccc !important;
     pointer-events: none;
 }
+
+/* =========================================
+   GLOBAL LAYOUT (admin-layout)
+========================================= */
+body {
+    background-color: #f4f6f9;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.app-layout { display: flex; min-height: 100vh; }
+
+.app-sidebar {
+    width: 260px; min-width: 260px; height: 100vh;
+    position: fixed; top: 0; left: 0;
+    overflow-y: auto; z-index: 1000;
+    background-color: #ffffff; border-right: 1px solid #e9ecef;
+}
+
+/* Tùy chỉnh thanh cuộn chung cho Sidebar & POS */
+::-webkit-scrollbar,
+.app-sidebar::-webkit-scrollbar { width: 5px; }
+
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+.app-sidebar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+
+.app-content {
+    flex-grow: 1; margin-left: 260px; min-height: 100vh;
+    display: flex; flex-direction: column;
+}
+
+/* -- BẢO MẬT & UX -- */
+.protect-img {
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+.menu-arrow { transition: transform 0.3s ease; }
+.nav-link[aria-expanded="true"] .menu-arrow { transform: rotate(180deg); }
+
+/* =========================================
+   POS / BÁN HÀNG
+========================================= */
+.pos-wrapper { height: calc(100vh - 95px); }
+
+.product-grid {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 15px;
+}
+
+.pos-right-col {
+    background-color: #f4f6f8;
+    overflow-y: auto;
+}
+
+.product-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08) !important;
+    border-color: #0d6efd !important;
+}
+
+.product-img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.cat-select {
+    max-width: 180px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.cart-table th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.cart-table td { vertical-align: middle; }
+
+.btn-hold {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    font-weight: 500;
+}
+
+.btn-hold:hover { background-color: #e9ecef; }

@@ -23,7 +23,7 @@ public class SanPhamController {
 
     SanPhamService sanPhamService;
 
-    @GetMapping("/hien-thi")
+    @GetMapping()
     public String hienThi(Model model,
                           @RequestParam(value = "keyword", required = false) String keyword,
                           @RequestParam(value = "page", defaultValue = "1") int page,
@@ -46,19 +46,19 @@ public class SanPhamController {
         model.addAttribute("sanPhamRequest", new SanPhamRequest());
         model.addAttribute("listLoaiSanPham", sanPhamService.getDanhSachLoaiSanPham());
 
-        return "views/admin/san-pham-hien-thi";
+        return "views/admin/san-pham";
     }
 
     @PostMapping("/save")
     public String saveOrUpdate(@ModelAttribute("sanPhamRequest") SanPhamRequest request,
                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
         sanPhamService.saveOrUpdate(request, imageFile);
-        return "redirect:/san-pham/hien-thi";
+        return "redirect:/san-pham";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") String id) {
         sanPhamService.deleteById(id);
-        return "redirect:/san-pham/hien-thi";
+        return "redirect:/san-pham";
     }
 }
