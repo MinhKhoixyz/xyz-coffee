@@ -1,7 +1,9 @@
 package com.coffee.xyzbackend.service;
 
+import com.coffee.xyzbackend.dto.response.HoaDonChiTietResponse;
 import com.coffee.xyzbackend.dto.response.HoaDonResponse;
 import com.coffee.xyzbackend.model.HoaDon;
+import com.coffee.xyzbackend.repository.HoaDonChiTietRepository;
 import com.coffee.xyzbackend.repository.HoaDonRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,16 +14,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HoaDonService {
 
     HoaDonRepository hoaDonRepository;
+    HoaDonChiTietRepository hoaDonChiTietRepository;
 
     public Page<HoaDonResponse> getDanhSachHoaDon(int page, int size, String keyword, String status) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-
         String kw = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
         String st = (status != null && !status.trim().isEmpty()) ? status.trim() : null;
 
@@ -35,5 +40,17 @@ public class HoaDonService {
                 .paymentMethod(hd.getPaymentMethod())
                 .createdAt(hd.getCreatedAt())
                 .build());
+    }
+
+    public List<HoaDonChiTietResponse> getChiTietHoaDon(String hoaDonId) {
+        return hoaDonChiTietRepository.findByHoaDon_Id(hoaDonId).stream()
+                .map(ct -> HoaDonChiTietResponse.builder()
+                        .productName(ct.getSanPhamKichCo().getSanPham().getName())
+                        .sizeName(ct.getSanPhamKichCo().getSizeName())
+                        .quantity(ct.getQuantity())
+                        .price(ct.getPrice())
+                        .totalAmount(ct.getTotalAmount())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

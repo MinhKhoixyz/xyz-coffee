@@ -153,8 +153,27 @@
                     <h5 class="modal-title fw-bold text-dark"><i class='bx bx-receipt text-primary'></i> Chi tiết Hóa Đơn <span id="modalHdCode" class="text-primary"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4 text-center">
-                    <h5 class="text-muted">Tính năng xem chi tiết đang được phát triển...</h5>
+
+                <div class="modal-body p-4">
+                    <div id="modalLoading" class="text-center text-muted py-4">
+                        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                        <p class="mb-0">Đang tải dữ liệu...</p>
+                    </div>
+
+                    <div id="modalContent" style="display: none;">
+                        <table class="table table-borderless table-sm mb-0 align-middle">
+                            <thead class="border-bottom text-muted" style="font-size: 0.85rem; text-transform: uppercase;">
+                            <tr>
+                                <th class="pb-2">Tên sản phẩm</th>
+                                <th class="text-center pb-2">Số lượng</th>
+                                <th class="text-end pb-2">Đơn giá</th>
+                                <th class="text-end pb-2 pe-3">Thành tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody id="chiTietTableBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
