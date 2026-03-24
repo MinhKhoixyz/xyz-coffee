@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +44,7 @@ public class LoginController {
             jwtCookie.setMaxAge(24 * 60 * 60);
 
             response.addCookie(jwtCookie);
-            return "redirect:/loai-san-pham/hien-thi";
+            return "redirect:/ban-hang";
         }
         model.addAttribute("error", "Tài khoản hoặc mật khẩu không đúng");
         return "views/auth/login";
