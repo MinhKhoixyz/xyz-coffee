@@ -45,7 +45,7 @@ public class LoginController {
             jwtCookie.setMaxAge(24 * 60 * 60);
 
             response.addCookie(jwtCookie);
-            return "redirect:/loai-san-pham/hien-thi";
+            return "redirect:/ban-hang";
         }
         model.addAttribute("error", "Tài khoản hoặc mật khẩu không đúng");
         return "views/auth/login";
