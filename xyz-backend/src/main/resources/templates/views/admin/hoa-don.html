@@ -1,0 +1,184 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark m-0">Quản lý Hóa Đơn</h4>
+        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill shadow-sm border">
+            <span class="text-muted" style="font-size: 0.9rem;">Xin chào, <strong class="text-dark"
+                                                                                  th:text="${session.username != null ? session.username : 'admin'}"></strong></span>
+            <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Avatar" class="rounded-circle"
+                 width="32" height="32">
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden mb-4">
+        <div class="card-header bg-white border-bottom-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <form th:action="@{/hoa-don}" method="get" class="m-0 d-flex gap-2">
+                <select name="status" class="form-select form-select-sm bg-light shadow-none border"
+                        style="width: 150px;" onchange="this.form.submit()">
+                    <option value="" th:selected="${status == null or status == ''}">Tất cả trạng thái</option>
+                    <option value="PAID" th:selected="${status == 'PAID'}">Đã thanh toán</option>
+                    <option value="PENDING" th:selected="${status == 'PENDING'}">Chờ xử lý</option>
+                    <option value="CANCELLED" th:selected="${status == 'CANCELLED'}">Đã hủy</option>
+                </select>
+
+                <div class="input-group input-group-sm" style="width: 250px;">
+                    <button type="submit" class="input-group-text bg-light border-end-0 text-muted"><i
+                            class='bx bx-search'></i></button>
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           class="form-control border-start-0 bg-light shadow-none" placeholder="Tìm mã hóa đơn...">
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted"
+                           style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="fw-semibold py-3 ps-4" style="width: 15%;">Mã HĐ</th>
+                        <th class="fw-semibold py-3" style="width: 15%;">Thời gian</th>
+                        <th class="fw-semibold py-3" style="width: 15%;">Nhân viên</th>
+                        <th class="fw-semibold py-3 text-end" style="width: 15%;">Tổng tiền</th>
+                        <th class="fw-semibold py-3 text-center" style="width: 15%;">Thanh toán</th>
+                        <th class="fw-semibold py-3 text-center" style="width: 15%;">Trạng thái</th>
+                        <th class="fw-semibold py-3 text-end pe-4" style="width: 10%;">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+
+                    <tr th:if="${#lists.isEmpty(listHoaDon)}">
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class='bx bx-receipt fs-1 text-light mb-2'></i>
+                            <p class="mb-0">Chưa có hóa đơn nào.</p>
+                        </td>
+                    </tr>
+
+                    <tr th:each="hd : ${listHoaDon}">
+                        <td class="ps-4">
+                            <span class="text-dark fw-bold" style="font-family: monospace; font-size: 0.95rem;"
+                                  th:text="${'#' + #strings.substring(hd.id, 0, 8).toUpperCase()}"></span>
+                        </td>
+
+                        <td><span class="text-secondary" style="font-size: 0.9rem;"
+                                  th:text="${#temporals.format(hd.createdAt, 'dd/MM/yyyy HH:mm')}"></span></td>
+
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-light rounded-circle d-flex justify-content-center align-items-center text-primary fw-bold"
+                                     style="width: 30px; height: 30px; font-size: 0.8rem;"
+                                     th:text="${#strings.substring(hd.accountName, 0, 1).toUpperCase()}"></div>
+                                <span class="text-dark fw-medium" th:text="${hd.accountName}"></span>
+                            </div>
+                        </td>
+
+                        <td class="text-end">
+                            <span class="text-danger fw-bold"
+                                  th:text="${#numbers.formatDecimal(hd.totalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span>
+                        </td>
+
+                        <td class="text-center">
+                            <span th:if="${hd.paymentMethod == 'CASH'}"
+                                  class="badge bg-light text-dark border px-2 py-1"><i
+                                    class='bx bx-money text-success'></i> Tiền mặt</span>
+                            <span th:if="${hd.paymentMethod == 'TRANSFER'}"
+                                  class="badge bg-light text-dark border px-2 py-1"><i
+                                    class='bx bx-qr-scan text-primary'></i> Chuyển khoản</span>
+                        </td>
+
+                        <td class="text-center">
+                            <span th:if="${hd.status == 'PAID'}"
+                                  class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 rounded-2">Đã thanh toán</span>
+                            <span th:if="${hd.status == 'PENDING'}"
+                                  class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1 rounded-2">Chờ xử lý</span>
+                            <span th:if="${hd.status == 'CANCELLED'}"
+                                  class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1 rounded-2">Đã hủy</span>
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-light text-primary border-0 p-2 me-1"
+                                    th:data-id="${hd.id}"
+                                    onclick="openDetailModal(this.getAttribute('data-id'))"
+                                    data-bs-toggle="tooltip" title="Xem chi tiết">
+                                <i class='bx bx-show fs-5'></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${totalItems > 0}" class="card-footer bg-white border-top py-3 d-flex justify-content-center align-items-center gap-4">
+                <ul class="pv-pagination">
+                    <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/hoa-don(page=1, size=${pageSize}, keyword=${keyword}, status=${status})}"><i class='bx bx-chevrons-left'></i></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/hoa-don(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, status=${status})}"><i class='bx bx-chevron-left'></i></a>
+                    </li>
+
+                    <th:block th:with="start=${currentPage > 2 ? (currentPage + 2 > totalPages ? (totalPages - 4 > 0 ? totalPages - 4 : 1) : currentPage - 2) : 1}, end=${start + 4 > totalPages ? totalPages : start + 4}">
+                        <li class="page-item" th:each="i : ${#numbers.sequence(start, end)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" th:href="@{/hoa-don(page=${i}, size=${pageSize}, keyword=${keyword}, status=${status})}" th:text="${i}"></a>
+                        </li>
+                    </th:block>
+
+                    <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/hoa-don(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, status=${status})}"><i class='bx bx-chevron-right'></i></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/hoa-don(page=${totalPages}, size=${pageSize}, keyword=${keyword}, status=${status})}"><i class='bx bx-chevrons-right'></i></a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted" style="font-size: 0.85rem;">
+                        Hiển thị <span th:text="${(currentPage - 1) * pageSize + 1}"></span> đến <span th:text="${currentPage * pageSize > totalItems ? totalItems : currentPage * pageSize}"></span> trong <span th:text="${totalItems}"></span> hóa đơn
+                    </span>
+                    <select class="form-select form-select-sm shadow-none border" style="width: 65px; cursor: pointer;" onchange="changePageSize(this.value)">
+                        <option value="5" th:selected="${pageSize == 5}">5</option>
+                        <option value="10" th:selected="${pageSize == 10}">10</option>
+                        <option value="25" th:selected="${pageSize == 25}">25</option>
+                        <option value="50" th:selected="${pageSize == 50}">50</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="chiTietHoaDonModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark"><i class='bx bx-receipt text-primary'></i> Chi tiết Hóa Đơn <span id="modalHdCode" class="text-primary"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div id="modalLoading" class="text-center text-muted py-4">
+                        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                        <p class="mb-0">Đang tải dữ liệu...</p>
+                    </div>
+
+                    <div id="modalContent" style="display: none;">
+                        <table class="table table-borderless table-sm mb-0 align-middle">
+                            <thead class="border-bottom text-muted" style="font-size: 0.85rem; text-transform: uppercase;">
+                            <tr>
+                                <th class="pb-2">Tên sản phẩm</th>
+                                <th class="text-center pb-2">Số lượng</th>
+                                <th class="text-end pb-2">Đơn giá</th>
+                                <th class="text-end pb-2 pe-3">Thành tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody id="chiTietTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/assets/js/hoa-don.js}"></script>
+</section>
+</html>

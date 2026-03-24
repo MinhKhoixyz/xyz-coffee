@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse<Object>> handlingRuntimeException(RuntimeException exception) {
+    ResponseEntity<ApiResponse<Object>> handlingRuntimeException(Exception exception) {
         return ResponseEntity.badRequest().body(ApiResponse.builder()
                 .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
                 .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())

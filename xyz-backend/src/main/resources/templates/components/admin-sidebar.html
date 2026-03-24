@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
     <title>Sidebar</title>
@@ -19,18 +19,22 @@
             padding: 10px 16px;
             text-decoration: none;
         }
+
         .sidebar-item:hover {
             background-color: #f8fafc;
             color: #0f172a;
         }
+
         .sidebar-item.active {
             background-color: #f1f5f9;
             color: #0284c7;
         }
+
         .sidebar-icon {
             font-size: 1.35rem;
             margin-right: 14px;
         }
+
         .sidebar-sub-item {
             color: #64748b;
             font-size: 0.9rem;
@@ -42,14 +46,17 @@
             align-items: center;
             margin-bottom: 4px;
         }
+
         .sidebar-sub-item:hover {
             color: #0f172a;
             background-color: #f8fafc;
         }
+
         .sidebar-sub-item.active {
             color: #0284c7;
             background-color: transparent;
         }
+
         .sidebar-sub-icon {
             font-size: 1.1rem;
             margin-right: 10px;
@@ -59,23 +66,24 @@
         .menu-arrow {
             transition: transform 0.3s ease;
         }
+
         .sidebar-item[aria-expanded="true"] .menu-arrow {
             transform: rotate(-180deg);
         }
     </style>
 
     <div class="p-4 text-center mb-1 d-none d-lg-block">
-        <a th:href="@{/admin/ban-hang}">
+        <a th:href="@{/ban-hang}">
             <img th:src="@{/assets/img/system/xyz-logo.jpg}" alt="XYZ Coffee"
                  class="img-fluid protect-img" style="max-width: 90px; opacity: 0.95;"
-                 draggable="false" oncontextmenu="return false;" />
+                 draggable="false" oncontextmenu="return false;"/>
         </a>
     </div>
 
     <ul class="nav flex-column px-3 mb-auto list-unstyled">
 
         <li>
-            <a th:href="@{/admin/ban-hang}" class="sidebar-item d-flex align-items-center">
+            <a th:href="@{/ban-hang}" class="sidebar-item d-flex align-items-center">
                 <i class="bx bx-store-alt sidebar-icon"></i>
                 <span>Bán hàng (POS)</span>
             </a>
@@ -83,7 +91,8 @@
 
         <li>
             <a class="sidebar-item d-flex align-items-center justify-content-between"
-               data-bs-toggle="collapse" href="#menuSanPham" role="button" aria-expanded="false" aria-controls="menuSanPham">
+               data-bs-toggle="collapse" href="#menuSanPham" role="button" aria-expanded="false"
+               aria-controls="menuSanPham">
                 <div class="d-flex align-items-center">
                     <i class="bx bx-coffee-togo sidebar-icon"></i>
                     <span>Sản phẩm</span>
@@ -94,13 +103,18 @@
             <div class="collapse" id="menuSanPham" data-bs-parent="#mainSidebar">
                 <ul class="list-unstyled mt-1 mb-2">
                     <li>
-                        <a th:href="@{/loai-san-pham/hien-thi}" class="sidebar-sub-item">
+                        <a th:href="@{/loai-san-pham}" class="sidebar-sub-item">
                             <i class="bx bx-category-alt sidebar-sub-icon"></i> Phân loại
                         </a>
                     </li>
                     <li>
-                        <a th:href="@{/san-pham/hien-thi}" class="sidebar-sub-item">
-                            <i class="bx bx-list-ul sidebar-sub-icon"></i> Danh sách
+                        <a th:href="@{/san-pham}" class="sidebar-sub-item">
+                            <i class="bx bx-list-ul sidebar-sub-icon"></i> Danh sách sản phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/san-pham-kich-co}" class="sidebar-sub-item">
+                            <i class='bx bx-purchase-tag sidebar-sub-icon'></i> Kích cỡ sản phẩm
                         </a>
                     </li>
                 </ul>
@@ -108,7 +122,7 @@
         </li>
 
         <li>
-            <a th:href="@{/quan-ly-hoa-don}" class="sidebar-item d-flex align-items-center">
+            <a th:href="@{/hoa-don}" class="sidebar-item d-flex align-items-center">
                 <i class="bx bx-receipt sidebar-icon"></i>
                 <span>Hóa đơn</span>
             </a>
@@ -123,7 +137,7 @@
     </ul>
 
     <div class="p-3 mt-4 mb-2">
-        <a th:href="@{/logout}" data-bs-toggle="modal" data-bs-target="#logoutModal"
+        <a href="/logout" data-bs-toggle="modal"
            class="sidebar-item d-flex align-items-center" style="color: #ef4444;">
             <i class="bx bx-log-out-circle sidebar-icon"></i>
             <span>Đăng xuất</span>

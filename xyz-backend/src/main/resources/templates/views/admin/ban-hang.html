@@ -1,0 +1,189 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/admin-layout :: layout(~{::section})}">
+<section class="h-100">
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden pos-wrapper">
+        <div class="row g-0 h-100">
+
+            <div class="col-lg-7 d-flex flex-column h-100 border-end pt-3">
+                <div class="px-3 pb-3 border-bottom d-flex justify-content-between align-items-center bg-white">
+                    <h5 class="fw-bold text-dark m-0">Thực đơn sản phẩm</h5>
+                    <div class="d-flex gap-2">
+                        <select id="categoryFilter" class="form-select form-select-sm shadow-none cat-select border"
+                                onchange="filterProducts()">
+                            <option value="ALL">Tất cả món</option>
+                            <option th:each="loai : ${listLoaiSanPham}" th:value="${loai.name}"
+                                    th:text="${loai.name}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="product-grid bg-white">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-sm-6 product-item" th:each="sp : ${listSanPham}" th:if="${sp.isActive}"
+                             th:data-category="${sp.loaiSanPham.name}">
+                            <div class="card product-card h-100 border shadow-sm"
+                                 th:data-id="${sp.id}"
+                                 th:data-name="${sp.name}"
+                                 onclick="openSizeModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+
+                                <img th:if="${sp.imageUrl != null and !sp.imageUrl.isEmpty()}"
+                                     th:src="@{${sp.imageUrl}}" class="product-img">
+                                <div th:unless="${sp.imageUrl != null and !sp.imageUrl.isEmpty()}"
+                                     class="product-img bg-light d-flex align-items-center justify-content-center text-muted">
+                                    <i class='bx bx-image fs-1'></i>
+                                </div>
+
+                                <div class="card-body p-2 text-center d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-1 text-truncate" th:text="${sp.name}"
+                                            style="font-size: 0.95rem;"></h6>
+                                        <small class="text-muted d-block mb-2" th:text="${sp.loaiSanPham.name}"></small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary w-100 rounded-pill fw-medium">Chọn
+                                        món
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-flex flex-column h-100 pos-right-col p-3 gap-3">
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white border-bottom py-2 px-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-warning"><i class='bx bx-time-five'></i> Hóa đơn chờ</span>
+                        <span class="badge bg-warning text-dark rounded-pill" id="pendingCount">0</span>
+                    </div>
+                    <div class="card-body p-2" style="max-height: 150px; overflow-y: auto;" id="pendingOrdersContainer">
+                        <div class="text-center text-muted py-3" style="font-size: 0.85rem;" id="emptyPendingMsg">
+                            Không có hóa đơn chờ
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 flex-grow-1 d-flex flex-column">
+                    <div class="card-header bg-white border-bottom py-3 px-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-success"><i class='bx bx-cart'></i> Giỏ hàng</span>
+                        <button class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="clearCart()"><i
+                                class='bx bx-trash'></i> Xóa
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0 overflow-auto flex-grow-1">
+                        <table class="table table-borderless cart-table mb-0">
+                            <thead class="bg-light sticky-top">
+                            <tr>
+                                <th class="ps-3">Món</th>
+                                <th class="text-center" style="width: 100px;">SL</th>
+                                <th class="text-end pe-3" style="width: 110px;">Tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody id="cartContainer">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-5">Chưa chọn món</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-footer bg-white border-top p-3">
+                        <div class="d-flex justify-content-between align-items-end mb-3">
+                            <span class="text-muted fw-bold">TỔNG CỘNG:</span>
+                            <span class="fw-bold text-danger fs-4" id="totalAmount">0đ</span>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <button class="btn btn-hold w-100 py-2 rounded-3" onclick="holdCurrentOrder()">HĐ Chờ
+                                </button>
+                            </div>
+                            <div class="col-8">
+                                <button class="btn btn-success w-100 py-2 fw-bold rounded-3 shadow-sm"
+                                        onclick="openCheckoutModal()">THANH TOÁN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sizeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold text-primary" id="modalProductName">Tên món</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modalProductId">
+                    <div id="sizeOptions" class="d-flex flex-column gap-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="checkoutModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header bg-success text-white border-0 rounded-top-4">
+                    <h5 class="modal-title fw-bold"><i class='bx bx-check-shield'></i> Xác nhận thanh toán</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <h6 class="text-muted mb-1">Cần thanh toán</h6>
+                        <h2 class="text-danger fw-bold m-0" id="checkoutTotalLabel">0đ</h2>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold text-dark mb-2">Phương thức thanh toán:</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check bg-light border p-2 px-3 rounded-3 flex-fill">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="payCash"
+                                       value="CASH" checked onchange="togglePaymentUI()">
+                                <label class="form-check-label fw-medium ms-1" for="payCash" style="cursor: pointer;"><i
+                                        class='bx bx-money text-success'></i> Tiền mặt</label>
+                            </div>
+                            <div class="form-check bg-light border p-2 px-3 rounded-3 flex-fill">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="payTransfer"
+                                       value="TRANSFER" onchange="togglePaymentUI()">
+                                <label class="form-check-label fw-medium ms-1" for="payTransfer"
+                                       style="cursor: pointer;"><i class='bx bx-qr-scan text-primary'></i> Chuyển khoản</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="cashArea" class="p-3 bg-light rounded-3 border">
+                        <div class="mb-2 d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-medium">Khách đưa:</span>
+                            <div class="input-group input-group-sm w-50">
+                                <input type="number" class="form-control text-end fw-bold" id="customerGiven"
+                                       onkeyup="calculateChange()">
+                                <span class="input-group-text">đ</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-medium">Tiền thừa:</span>
+                            <span class="fw-bold text-primary fs-5" id="customerChange">0đ</span>
+                        </div>
+                    </div>
+
+                    <div id="qrArea" class="text-center p-3 bg-light rounded-3 border" style="display: none;">
+                        <p class="text-muted mb-2 fw-medium">Quét mã QR để thanh toán</p>
+                        <img src="/assets/img/system/qr.jpg" alt="QR Code" class="img-fluid rounded border shadow-sm"
+                             style="max-height: 200px;">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-success px-5 py-2 fw-bold shadow-sm rounded-pill"
+                            onclick="submitCheckout()"><i class='bx bx-check'></i> HOÀN TẤT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/assets/js/ban-hang.js}"></script>
+</section>
+</html>
