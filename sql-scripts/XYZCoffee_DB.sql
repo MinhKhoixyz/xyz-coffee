@@ -23,7 +23,7 @@ CREATE TABLE [dbo].[account] (
     is_active BIT DEFAULT 1, 
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
-    CONSTRAINT CHK_Role CHECK (role IN ('BOSS', 'ADMIN', 'STAFF'))
+    CONSTRAINT CHK_Role CHECK (role IN ('USER', 'BOSS', 'ADMIN', 'STAFF'))
 );
 GO
 
@@ -215,3 +215,5 @@ CREATE TABLE [dbo].[hoa_don_chi_tiet] (
     CONSTRAINT FK_ChiTiet_KichCo FOREIGN KEY (product_size_id) REFERENCES [dbo].[san_pham_kich_co](id)
 );
 GO
+
+SELECT * FROM [dbo].[hoa_don_chi_tiet];

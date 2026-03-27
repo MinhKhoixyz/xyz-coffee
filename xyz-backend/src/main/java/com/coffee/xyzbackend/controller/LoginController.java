@@ -38,8 +38,8 @@ public class LoginController {
             String token = jwtService.generateToken(account.getUsername(), account.getRole());
 
             Cookie jwtCookie = new Cookie("accessToken", token);
-            jwtCookie.setHttpOnly(true); // Chống XSS
-            jwtCookie.setSecure(false); // Khi nào đẩy lên domain HTTPS thật thì đổi thành true
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(false);
             jwtCookie.setPath("/");
             jwtCookie.setMaxAge(24 * 60 * 60);
 
