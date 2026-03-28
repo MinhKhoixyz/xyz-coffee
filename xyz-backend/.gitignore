@@ -42,3 +42,8 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+.idea/
+*.iml
+out/
+gen/

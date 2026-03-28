@@ -42,6 +42,16 @@ public class JwtService {
                 .getSubject();
     }
 
+    // Get time invalidate của Token
+    public Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
