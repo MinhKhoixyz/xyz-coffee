@@ -47,3 +47,4 @@ Thumbs.db
 *.iml
 out/
 gen/
+.env

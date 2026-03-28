@@ -8,70 +8,6 @@
 
 <div th:fragment="sidebar" class="app-sidebar d-flex flex-column bg-white shadow-sm" id="mainSidebar">
 
-    <style>
-        .sidebar-item {
-            color: #475569;
-            font-size: 0.95rem;
-            letter-spacing: 0.3px;
-            border-radius: 8px;
-            transition: all 0.2s ease-in-out;
-            margin-bottom: 6px;
-            padding: 10px 16px;
-            text-decoration: none;
-        }
-
-        .sidebar-item:hover {
-            background-color: #f8fafc;
-            color: #0f172a;
-        }
-
-        .sidebar-item.active {
-            background-color: #f1f5f9;
-            color: #0284c7;
-        }
-
-        .sidebar-icon {
-            font-size: 1.35rem;
-            margin-right: 14px;
-        }
-
-        .sidebar-sub-item {
-            color: #64748b;
-            font-size: 0.9rem;
-            padding: 8px 16px 8px 46px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .sidebar-sub-item:hover {
-            color: #0f172a;
-            background-color: #f8fafc;
-        }
-
-        .sidebar-sub-item.active {
-            color: #0284c7;
-            background-color: transparent;
-        }
-
-        .sidebar-sub-icon {
-            font-size: 1.1rem;
-            margin-right: 10px;
-        }
-
-        /* --- CSS MỚI: HIỆU ỨNG XOAY MŨI TÊN --- */
-        .menu-arrow {
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-item[aria-expanded="true"] .menu-arrow {
-            transform: rotate(-180deg);
-        }
-    </style>
-
     <div class="p-4 text-center mb-1 d-none d-lg-block">
         <a th:href="@{/ban-hang}">
             <img th:src="@{/assets/img/system/xyz-logo.jpg}" alt="XYZ Coffee"
@@ -137,8 +73,7 @@
     </ul>
 
     <div class="p-3 mt-4 mb-2">
-        <a href="/logout" data-bs-toggle="modal"
-           class="sidebar-item d-flex align-items-center" style="color: #ef4444;">
+        <a th:href="@{/logout}" class="sidebar-item d-flex align-items-center" style="color: #ef4444;">
             <i class="bx bx-log-out-circle sidebar-icon"></i>
             <span>Đăng xuất</span>
         </a>

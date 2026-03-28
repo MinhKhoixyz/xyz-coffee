@@ -30,6 +30,18 @@ GO
 CREATE UNIQUE INDEX UX_OnlyOneBoss ON [dbo].[account](role) WHERE role = 'BOSS';
 GO
 
+CREATE TABLE [dbo].[nhan_vien] (
+    id VARCHAR(36) PRIMARY KEY DEFAULT NEWID(),
+    account_id VARCHAR(36) UNIQUE NOT NULL, 
+    full_name NVARCHAR(100) NOT NULL,
+    phone VARCHAR(15),
+    avatar_url VARCHAR(500),
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_NhanVien_Account FOREIGN KEY (account_id) REFERENCES [dbo].[account](id) ON DELETE CASCADE
+);
+GO
+
 CREATE TABLE [dbo].[loai_san_pham] (
     id VARCHAR(36) PRIMARY KEY DEFAULT NEWID(),
     name NVARCHAR(100) NOT NULL UNIQUE, 
@@ -215,5 +227,3 @@ CREATE TABLE [dbo].[hoa_don_chi_tiet] (
     CONSTRAINT FK_ChiTiet_KichCo FOREIGN KEY (product_size_id) REFERENCES [dbo].[san_pham_kich_co](id)
 );
 GO
-
-SELECT * FROM [dbo].[hoa_don_chi_tiet];

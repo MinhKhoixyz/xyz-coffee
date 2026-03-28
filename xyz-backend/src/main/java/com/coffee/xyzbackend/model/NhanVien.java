@@ -1,7 +1,6 @@
 package com.coffee.xyzbackend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,33 +13,27 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name = "account")
+@Table(name = "nhan_vien")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Account {
+public class NhanVien {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(name = "username", nullable = false, unique = true)
-    String username;
-
-    @Column(name = "password", nullable = false)
-    String password;
-
-    @Email
-    @Column(name = "email", nullable = false, unique = true)
-    String email;
-
-    @Column(name = "role")
-    String role;
-
-    @Column(name = "is_active")
-    Boolean isActive;
-
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false, unique = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    NhanVien nhanVien;
+    Account account;
+
+    @Column(name = "full_name", nullable = false, length = 100)
+    String fullName;
+
+    @Column(length = 15)
+    String phone;
+
+    @Column(name = "avatar_url", length = 500)
+    String avatarUrl;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp

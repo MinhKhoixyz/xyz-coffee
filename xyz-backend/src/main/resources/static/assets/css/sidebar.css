@@ -1,0 +1,64 @@
+/* =========================================
+   SIDEBAR
+========================================= */
+.sidebar-item {
+    color: #475569;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 6px;
+    padding: 10px 16px;
+    text-decoration: none;
+}
+
+.sidebar-item:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.sidebar-item.active {
+    background-color: #f1f5f9;
+    color: #0284c7;
+}
+
+.sidebar-icon {
+    font-size: 1.35rem;
+    margin-right: 14px;
+}
+
+.sidebar-sub-item {
+    color: #64748b;
+    font-size: 0.9rem;
+    padding: 8px 16px 8px 46px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.sidebar-sub-item:hover {
+    color: #0f172a;
+    background-color: #f8fafc;
+}
+
+.sidebar-sub-item.active {
+    color: #0284c7;
+    background-color: transparent;
+}
+
+.sidebar-sub-icon {
+    font-size: 1.1rem;
+    margin-right: 10px;
+}
+
+/* Hiệu ứng xoay mũi tên */
+.menu-arrow {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-item[aria-expanded="true"] .menu-arrow {
+    transform: rotate(-180deg);
+}

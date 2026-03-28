@@ -4,7 +4,9 @@ import com.coffee.xyzbackend.dto.request.LoginRequest;
 import com.coffee.xyzbackend.model.Account;
 import com.coffee.xyzbackend.service.AccountService;
 import com.coffee.xyzbackend.service.JwtService;
+import com.coffee.xyzbackend.service.TokenBlacklistService; // Nhớ import cái này
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Date;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class LoginController {
     AccountService accountService;
     JwtService jwtService;
+    TokenBlacklistService tokenBlacklistService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -51,11 +56,26 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletResponse response) {
-        Cookie jwtCookie = new Cookie("accessToken", null);
-        jwtCookie.setMaxAge(0);
-        jwtCookie.setPath("/");
-        response.addCookie(jwtCookie);
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("accessToken".equals(cookie.getName())) {
+                    String token = cookie.getValue();
+
+                    try {
+                        Date expiration = jwtService.extractExpiration(token);
+                        tokenBlacklistService.addToBlacklist(token, expiration.getTime());
+                    } catch (Exception e) {
+                    }
+
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                    break;
+                }
+            }
+        }
         return "redirect:/login";
     }
 }

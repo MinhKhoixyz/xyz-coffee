@@ -10,7 +10,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Service
-@Slf4j // Khởi tạo bộ ghi Log
+@Slf4j
 public class JwtService {
 
     @Value("${jwt.secret}")
@@ -40,6 +40,15 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
     }
 
     public boolean validateToken(String token) {

@@ -20,7 +20,7 @@ public class BanHangService {
 
     private final HoaDonRepository hoaDonRepository;
     private final SanPhamKichCoRepository sanPhamKichCoRepository;
-    private final AccountRepository accountRepository; // Thêm Account Repo
+    private final AccountRepository accountRepository;
 
     @Transactional
     public void taoHoaDon(HoaDonRequest request, String currentUsername) {
@@ -28,8 +28,8 @@ public class BanHangService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin nhân viên!"));
 
         HoaDon hoaDon = new HoaDon();
-        hoaDon.setAccount(staff); // Set nhân viên
-        hoaDon.setCustomerId(request.getCustomerId()); // Set khách (có thể null)
+        hoaDon.setAccount(staff);
+        hoaDon.setCustomerId(request.getCustomerId());
         hoaDon.setTotalAmount(request.getTotalAmount());
         hoaDon.setPaymentMethod(request.getPaymentMethod());
         hoaDon.setStatus("PAID");
